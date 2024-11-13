@@ -59,7 +59,7 @@ To get a local copy up and running, follow these simple steps.
 
 To run the project, you need to integrate the game files into `gym-retro`:
 
-1. Copy the `retro_integration/PokemonSilver-GbColor` folder from this repository.
+1. Copy the `/PokemonSilver-GbColor` folder from this repository.
 2. Place it in the following directory within your virtual environment:
    
    ```bash
