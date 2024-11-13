@@ -55,6 +55,21 @@ To get a local copy up and running, follow these simple steps.
    python test.py  # Replace with entry point
    ```
 
+## Adding Game Integration Files
+
+To run the project, you need to integrate the game files into `gym-retro`:
+
+1. Copy the `retro_integration/PokemonSilver-GbColor` folder from this repository.
+2. Place it in the following directory within your virtual environment:
+   
+   ```bash
+   venv/lib/python3.12/site-packages/retro/data/stable/
+   ```
+
+   Ensure that the path `venv/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor` exists and contains the integration files.
+
+**Note**: The ROM file itself is not included and must be legally obtained and added to the `PokemonSilver-GbColor` folder separately.
+
 ## Usage
 
 Provide examples and instructions on how to use your project effectively. Include screenshots or code snippets as necessary.
