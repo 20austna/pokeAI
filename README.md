@@ -52,7 +52,7 @@ To get a local copy up and running, follow these simple steps.
    ```
 5. Run the project:
    ```bash
-   python test.py  # Replace with your project’s entry point
+   python test.py  # Replace with entry point
    ```
 
 ## Usage
