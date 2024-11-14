@@ -1,0 +1,28 @@
+{
+  "info": {
+    "HP": {
+      "address": 51996,
+      "type": ">u2"
+    },
+    "Current_Move_1": {
+      "address": 51982,
+      "type": ">u1"
+    },
+    "Current_Move_2": {
+      "address": 51983,
+      "type": ">u1"
+    },
+    "Current_Move_3": {
+      "address": 51984,
+      "type": ">u1"
+    },
+    "Current_Move_4": {
+      "address": 51985,
+      "type": ">u1"
+    },
+    "Battle_Type": {
+      "address": 53526,
+      "type": ">u1"
+    }
+  }
+}
