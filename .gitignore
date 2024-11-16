@@ -1,0 +1,21 @@
+# Ignore the virtual environment folder
+vretro/
+
+# Ignore any generated files or caches
+__pycache__/
+*.pyc
+
+# Ignore ROM files (by file extension)
+*.rom
+*.gba
+*.iso
+*.gbc
+
+# Track specific game integration folder
+!PokemonSilver-GbColor/
+
+# Ignore Zone.Identifier
+*:Zone.Identifier
+
+# Ignore Sync Script
+sync_game_files.sh
