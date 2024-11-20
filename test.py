@@ -247,7 +247,7 @@ while not done:
 
     # every time we do env.step we step forward a frame in the game. 
     # during this frame we can pass in controller input via the action[] array
-    obs, _, done, _, info = env.step(action) 
+    obs, _, done, _, info = env.step(action)
     # after performing this action we get back some information from the games' RAM 
     # this is stored in the variables on the left. 
     # since this isnt a traditional reinforcement learning project we dont need to keep track rewards.
@@ -271,5 +271,34 @@ while not done:
         done = True  # Stop after capturing info and printing decoded text
 
     i += 1
-    #time.sleep(0.1)  # Optional delay for smoother iteration, can be adjusted
+    time.sleep(0.1)  # Optional delay for smoother iteration, can be adjusted
 
+'''
+class Pokemon:
+    def __init__(self, pokemon_id, move_1, move_2, type_1, type_2=None, level, hp, defense, attack, ability):
+        self.name = find_poke_name(pokemon_id)
+        self.move1 = move_1
+        self.move2 = move_2
+        self.type1 = type_1
+        self.type2 = type_2
+        self.level = level
+        self.hp = hp
+        self.defense = defense
+        self.attack = attack
+        self.ability = ability
+        
+vhagar = Pokemon(
+    pokemon_id=150, #Mewtwo
+    move_1 = "Dracrys",
+    move_2 = "Sneak Attack",
+    type_1 = "Dragon",
+    type_2 = "Fire",
+    Level = 100,
+    hp = 120,
+    defense = 100,
+    attack = 150,
+    ability = "Fire Breath"
+)
+
+        
+'''
