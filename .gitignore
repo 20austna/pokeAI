@@ -18,4 +18,4 @@ __pycache__/
 *:Zone.Identifier
 
 # Ignore Sync Script
-sync_game_files.sh
+!sync_game_files.sh

@@ -173,6 +173,7 @@ def Decode(decimal_values):
     return decoded_string
 
 def create_encoding_chart():
+    #https://bulbapedia.bulbagarden.net/wiki/Character_encoding_(Generation_II)
     chart = [
         ["?", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"],
         ["Q", "R", "S", "T", "", "X", "Y", "Z", "(", ")", ":", ";", "[", "", "", ""],
@@ -204,7 +205,7 @@ def print_encoding_values():
                     print(f"Character: '{value}' | Hex: 0x{hex_value} | Decimal: {dec_value}")
 
 # Run the function
-#print_encoding_values()
+print_encoding_values()
 
 
 # TODO create and test a variable in the data.json track the number of moves each pokemon in our party has 
@@ -216,8 +217,11 @@ def print_encoding_values():
 # https://bulbapedia.bulbagarden.net/wiki/Special:ApiSandbox
 # https://www.mediawiki.org/wiki/API:Main_page
 # TODO create hardcoded type chart
-
-
+# TODO create method makeDecision(info) which returns a decision
+# this should be a move but in future we'll incorperate a switch and an item. 
+# TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
+# in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
+# but first i need to figure out various text boxes. 
 
 game='PokemonSilver-GbColor'
 data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json"
@@ -235,8 +239,14 @@ logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(messa
 done = False
 i = 0
 action = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # Default action with no buttons pressed
+action[4] = 1  # Press A
+obs, _, done, _, info = env.step(action)
+decoded_texts = process_text_box_variables(info)
 
-
+# Combine the decoded texts into a single string (if desired)
+combined_text = ''.join(decoded_texts)
+print(f"Decoded Text: {combined_text}")
+action[4] = 0  # Press UP
 action[8] = 1  # Press A
 env.render()
 obs, _, done, _, info = env.step(action)
@@ -273,3 +283,5 @@ while not done:
     i += 1
     #time.sleep(0.1)  # Optional delay for smoother iteration, can be adjusted
 
+#textBox_9 is also where the arrow/space next to fight is
+#textBox_15 is also where the arrow/space next to 
