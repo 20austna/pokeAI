@@ -285,29 +285,43 @@ while not done:
 
 '''
 class Pokemon:
-    def __init__(self, pokemon_id, move_1, move_2, type_1, type_2=None, level, hp, defense, attack, ability):
+    def __init__(self, pokemon_id, move_1, move_2, move_3, move_4, type_1, type_2=None, level, current_HP, max_HP, hp, defense, attack, ability, speed, special_Defense, special_Attack):
         self.name = find_poke_name(pokemon_id)
         self.move1 = move_1
         self.move2 = move_2
+        self.move3 = move_3
+        self.move4 = move_4
         self.type1 = type_1
         self.type2 = type_2
         self.level = level
+        self.current_HP = current_HP
+        self.max_HP = max_HP
         self.hp = hp
         self.defense = defense
         self.attack = attack
         self.ability = ability
+        self.speed = speed
+        self.special_Defense = special_Defense
+        self.special_Attack = special_Attack
         
 vhagar = Pokemon(
     pokemon_id=150, #Mewtwo
     move_1 = "Dracrys",
     move_2 = "Sneak Attack",
+    move_3 = "Roar",
+    move_4 = "Claw",
     type_1 = "Dragon",
     type_2 = "Fire",
     Level = 100,
+    current_HP = 100,
+    max_HP = 120,
     hp = 120,
     defense = 100,
     attack = 150,
-    ability = "Fire Breath"
+    ability = "Fire Breath",
+    speed = 100,
+    special_Defense = 100,
+    special_Attack = 150
 )
         
 '''
