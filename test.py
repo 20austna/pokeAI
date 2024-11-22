@@ -143,7 +143,7 @@ while not done:
 
     # every time we do env.step we step forward a frame in the game. 
     # during this frame we can pass in controller input via the action[] array
-    obs, _, done, _, info = env.step(action) 
+    obs, _, done, _, info = env.step(action)
     # after performing this action we get back some information from the games' RAM 
     # this is stored in the variables on the left. 
     # since this isnt a traditional reinforcement learning project we dont need to keep track rewards.
@@ -167,7 +167,50 @@ while not done:
         done = True  # Stop after capturing info and printing decoded text
 
     i += 1
-    #time.sleep(0.1)  # Optional delay for smoother iteration, can be adjusted
+    time.sleep(0.1)  # Optional delay for smoother iteration, can be adjusted
+
+'''
+class Pokemon:
+    def __init__(self, pokemon_id, move_1, move_2, move_3, move_4, type_1, type_2=None, level, current_HP, max_HP, hp, defense, attack, ability, speed, special_Defense, special_Attack):
+        self.name = find_poke_name(pokemon_id)
+        self.move1 = move_1
+        self.move2 = move_2
+        self.move3 = move_3
+        self.move4 = move_4
+        self.type1 = type_1
+        self.type2 = type_2
+        self.level = level
+        self.current_HP = current_HP
+        self.max_HP = max_HP
+        self.hp = hp
+        self.defense = defense
+        self.attack = attack
+        self.ability = ability
+        self.speed = speed
+        self.special_Defense = special_Defense
+        self.special_Attack = special_Attack
+        
+vhagar = Pokemon(
+    pokemon_id=150, #Mewtwo
+    move_1 = "Dracrys",
+    move_2 = "Sneak Attack",
+    move_3 = "Roar",
+    move_4 = "Claw",
+    type_1 = "Dragon",
+    type_2 = "Fire",
+    Level = 100,
+    current_HP = 100,
+    max_HP = 120,
+    hp = 120,
+    defense = 100,
+    attack = 150,
+    ability = "Fire Breath",
+    speed = 100,
+    special_Defense = 100,
+    special_Attack = 150
+)
+        
+'''
 
 #textBox_9 is also where the arrow/space next to fight is
 #textBox_15 is also where the arrow/space next to 
