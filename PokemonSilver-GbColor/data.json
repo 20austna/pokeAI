@@ -1,8 +1,72 @@
 {
   "info": {
-    "HP": {
-      "address": 51996,
-      "type": ">u2"
+    "Num_Party_Mons": {
+      "address": 55842,
+      "type": ">u1"
+    },
+    "Pokemon_1": {
+      "address": 55850,
+      "type": ">u1"
+    },
+    "Mon_1_HP_1": {
+      "address": 55884,
+      "type": ">u1"
+    },
+    "Mon_1_HP_2": {
+      "address": 55885,
+      "type": ">u1"
+    },
+    "Mon_1_Max_HP_1": {
+      "address": 55886,
+      "type": ">u1"
+    },
+    "Mon_1_Max_HP_2": {
+      "address": 55887,
+      "type": ">u1"
+    },
+    "Mon_1_Attack_1": {
+      "address": 55888,
+      "type": ">u1"
+    },
+    "Mon_1_Attack_2": {
+      "address": 55889,
+      "type": ">u1"
+    },
+    "Mon_1_Defense_1": {
+      "address": 55890,
+      "type": ">u1"
+    },
+    "Mon_1_Defense_2": {
+      "address": 55891,
+      "type": ">u1"
+    },
+    "Mon_1_Speed_1": {
+      "address": 55892,
+      "type": ">u1"
+    },
+    "Mon_1_Speed_2": {
+      "address": 55893,
+      "type": ">u1"
+    },
+    "Mon_1_Sp_Defense_1": {
+      "address": 55894,
+      "type": ">u1"
+    },
+    "Mon_1_Sp_Defense_2": {
+      "address": 55895,
+      "type": ">u1"
+    },
+    "Mon_1_Sp_Attack_1": {
+      "address": 55896,
+      "type": ">u1"
+    },
+    "Mon_1_Sp_Attack_2": {
+      "address": 55897,
+      "type": ">u1"
+    },
+    "Current_Mon": {
+      "address": 51980,
+      "type": ">u1"
     },
     "Current_Move_1": {
       "address": 51982,
@@ -10,34 +74,6 @@
     },
     "Current_Move_2": {
       "address": 51983,
-      "type": ">u1"
-    },
-    "Num_Party_Mons": {
-      "address": 55842,
-      "type": ">u1"
-    },
-    "Pokemon_1": {
-      "address": 55843,
-      "type": ">u1"
-    },
-    "Pokemon_2": {
-      "address": 55908,
-      "type": ">u1"
-    },
-    "Pokemon_3": {
-      "address": 55909,
-      "type": ">u1"
-    },
-    "Pokemon_4": {
-      "address": 55910,
-      "type": ">u1"
-    },
-    "Pokemon_5": {
-      "address": 55911,
-      "type": ">u1"
-    },
-    "Pokemon_6": {
-      "address": 55912,
       "type": ">u1"
     },
     "Current_Move_3": {
