@@ -12,6 +12,34 @@
       "address": 51983,
       "type": ">u1"
     },
+    "Num_Party_Mons": {
+      "address": 55842,
+      "type": ">u1"
+    },
+    "Pokemon_1": {
+      "address": 55843,
+      "type": ">u1"
+    },
+    "Pokemon_2": {
+      "address": 55908,
+      "type": ">u1"
+    },
+    "Pokemon_3": {
+      "address": 55909,
+      "type": ">u1"
+    },
+    "Pokemon_4": {
+      "address": 55910,
+      "type": ">u1"
+    },
+    "Pokemon_5": {
+      "address": 55911,
+      "type": ">u1"
+    },
+    "Pokemon_6": {
+      "address": 55912,
+      "type": ">u1"
+    },
     "Current_Move_3": {
       "address": 51984,
       "type": ">u1"
