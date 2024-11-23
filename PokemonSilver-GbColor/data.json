@@ -101,62 +101,78 @@
         "type": ">u1"
     },
     "move_menu_move_1_text2": {
-        "address": 39333,
+        "address": 39329,
         "type": ">u1"
     },
     "move_menu_move_1_text3": {
-        "address": 39334,
+        "address": 39330,
         "type": ">u1"
     },
     "move_menu_move_1_text4": {
-        "address": 39335,
+        "address": 39331,
         "type": ">u1"
     },
     "move_menu_move_1_text5": {
-        "address": 39336,
+        "address": 39332,
         "type": ">u1"
     },
     "move_menu_move_1_text6": {
-        "address": 39337,
+        "address": 39333,
         "type": ">u1"
     },
     "move_menu_move_1_text7": {
-        "address": 39338,
+        "address": 39334,
         "type": ">u1"
     },
     "move_menu_move_1_text8": {
-        "address": 39339,
+        "address": 39335,
         "type": ">u1"
     },
     "move_menu_move_1_text9": {
-        "address": 39340,
+        "address": 39336,
         "type": ">u1"
     },
     "move_menu_move_1_text10": {
-        "address": 39341,
+        "address": 39337,
         "type": ">u1"
     },
     "move_menu_move_1_text11": {
-        "address": 39342,
+        "address": 39338,
         "type": ">u1"
     },
     "move_menu_move_1_text12": {
-        "address": 39343,
+        "address": 39339,
         "type": ">u1"
     },
     "move_menu_move_1_text13": {
-        "address": 39344,
+        "address": 39340,
         "type": ">u1"
     },
     "move_menu_move_1_text14": {
-        "address": 39345,
+        "address": 39341,
         "type": ">u1"
     },
     "move_menu_move_1_text15": {
-        "address": 39346,
+        "address": 39342,
         "type": ">u1"
     },
     "move_menu_move_1_text16": {
+        "address": 39343,
+        "type": ">u1"
+    },
+    "move_menu_move_1_text17": {
+        "address": 39344,
+        "type": ">u1"
+    },
+    "move_menu_move_1_text18": {
+        "address": 39345,
+        "type": ">u1"
+    },
+    "move_menu_move_1_text19": {
+        "address": 39346,
+        "type": ">u1"
+    },
+    "move_menu_move_1_text20": {
         "address": 39347,
         "type": ">u1"
     },
@@ -165,193 +181,241 @@
         "type": ">u1"
     },
     "move_menu_move_2_text2": {
-        "address": 39365,
+        "address": 39361,
         "type": ">u1"
     },
     "move_menu_move_2_text3": {
-        "address": 39366,
+        "address": 39362,
         "type": ">u1"
     },
     "move_menu_move_2_text4": {
-        "address": 39367,
+        "address": 39363,
         "type": ">u1"
     },
     "move_menu_move_2_text5": {
-        "address": 39368,
+        "address": 39364,
         "type": ">u1"
     },
     "move_menu_move_2_text6": {
-        "address": 39369,
+        "address": 39365,
         "type": ">u1"
     },
     "move_menu_move_2_text7": {
-        "address": 39370,
+        "address": 39366,
         "type": ">u1"
     },
     "move_menu_move_2_text8": {
-        "address": 39371,
+        "address": 39367,
         "type": ">u1"
     },
     "move_menu_move_2_text9": {
-        "address": 39372,
+        "address": 39368,
         "type": ">u1"
     },
     "move_menu_move_2_text10": {
-        "address": 39373,
+        "address": 39369,
         "type": ">u1"
     },
     "move_menu_move_2_text11": {
-        "address": 39374,
+        "address": 39370,
         "type": ">u1"
     },
     "move_menu_move_2_text12": {
-        "address": 39375,
+        "address": 39371,
         "type": ">u1"
     },
     "move_menu_move_2_text13": {
-        "address": 39376,
+        "address": 39372,
         "type": ">u1"
     },
     "move_menu_move_2_text14": {
-        "address": 39377,
+        "address": 39373,
         "type": ">u1"
     },
     "move_menu_move_2_text15": {
-        "address": 39378,
+        "address": 39374,
         "type": ">u1"
     },
     "move_menu_move_2_text16": {
-        "address": 39379,
+        "address": 39375,
         "type": ">u1"
     },
+    "move_menu_move_2_text17": {
+        "address": 39376,
+        "type": ">u1"
+    },
+    "move_menu_move_2_text18": {
+        "address": 39377,
+        "type": ">u1"
+    },
+    "move_menu_move_2_text19": {
+        "address": 39378,
+        "type": ">u1"
+    },
+    "move_menu_move_2_text20": {
+        "address": 39379,
+        "type": ">u1"
+    }, 
     "move_menu_move_3_text1": {
         "address": 39392,
         "type": ">u1"
     },
     "move_menu_move_3_text2": {
-        "address": 39397,
+        "address": 39393,
         "type": ">u1"
     },
     "move_menu_move_3_text3": {
-        "address": 39398,
+        "address": 39394,
         "type": ">u1"
     },
     "move_menu_move_3_text4": {
-        "address": 39399,
+        "address": 39395,
         "type": ">u1"
     },
     "move_menu_move_3_text5": {
-        "address": 39400,
+        "address": 39396,
         "type": ">u1"
     },
     "move_menu_move_3_text6": {
-        "address": 39401,
+        "address": 39397,
         "type": ">u1"
     },
     "move_menu_move_3_text7": {
-        "address": 39402,
+        "address": 39398,
         "type": ">u1"
     },
     "move_menu_move_3_text8": {
-        "address": 39403,
+        "address": 39399,
         "type": ">u1"
     },
     "move_menu_move_3_text9": {
-        "address": 39404,
+        "address": 39400,
         "type": ">u1"
     },
     "move_menu_move_3_text10": {
-        "address": 39405,
+        "address": 39401,
         "type": ">u1"
     },
     "move_menu_move_3_text11": {
-        "address": 39406,
+        "address": 39402,
         "type": ">u1"
     },
     "move_menu_move_3_text12": {
-        "address": 39407,
+        "address": 39403,
         "type": ">u1"
     },
     "move_menu_move_3_text13": {
-        "address": 39408,
+        "address": 39404,
         "type": ">u1"
     },
     "move_menu_move_3_text14": {
-        "address": 39409,
+        "address": 39405,
         "type": ">u1"
     },
     "move_menu_move_3_text15": {
-        "address": 39410,
+        "address": 39406,
         "type": ">u1"
     },
     "move_menu_move_3_text16": {
+        "address": 39407,
+        "type": ">u1"
+    },
+    "move_menu_move_3_text17": {
+        "address": 39408,
+        "type": ">u1"
+    },
+    "move_menu_move_3_text18": {
+        "address": 39409,
+        "type": ">u1"
+    },
+    "move_menu_move_3_text19": {
+        "address": 39410,
+        "type": ">u1"
+    },
+    "move_menu_move_3_text20": {
         "address": 39411,
         "type": ">u1"
     },
     "move_menu_move_4_text1": {
-        "address": 39428,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text2": {
-        "address": 39429,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text3": {
-        "address": 39430,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text4": {
-        "address": 39431,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text5": {
-        "address": 39432,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text6": {
-        "address": 39433,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text7": {
-        "address": 39434,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text8": {
-        "address": 39435,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text9": {
-        "address": 39436,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text10": {
-        "address": 39437,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text11": {
-        "address": 39438,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text12": {
-        "address": 39439,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text13": {
-        "address": 39440,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text14": {
-        "address": 39441,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text15": {
-        "address": 39442,
-        "type": ">u1"
-    },
-    "move_menu_move_4_text16": {
-        "address": 39443,
-        "type": ">u1"
-    }, 
+      "address": 39424,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text2": {
+      "address": 39425,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text3": {
+      "address": 39426,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text4": {
+      "address": 39427,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text5": {
+      "address": 39428,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text6": {
+      "address": 39429,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text7": {
+      "address": 39430,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text8": {
+      "address": 39431,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text9": {
+      "address": 39432,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text10": {
+      "address": 39433,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text11": {
+      "address": 39434,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text12": {
+      "address": 39435,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text13": {
+      "address": 39436,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text14": {
+      "address": 39437,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text15": {
+      "address": 39438,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text16": {
+      "address": 39439,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text17": {
+      "address": 39440,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text18": {
+      "address": 39441,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text19": {
+      "address": 39442,
+      "type": ">u1"
+  },
+  "move_menu_move_4_text20": {
+      "address": 39443,
+      "type": ">u1"
+  }, 
     "textBox_1": {
       "address": 39361, 
       "type": ">u1"
