@@ -8,6 +8,48 @@ import time
 import re  # For regex matching
 from pokemon import Pokemon
 
+def process_move_menu_variables(info):
+    """
+    Process the move_menu variables from the `info` dictionary with simplified naming conventions, 
+    decode them, and return a combined string.
+
+    Args:
+        info (dict): Dictionary containing the game's RAM variables and their values.
+
+    Returns:
+        str: A single string representing the decoded move menu contents.
+    """
+    import re
+
+    # List to hold tuples of (variable name, decoded value)
+    move_menu = []
+
+    # Extract keys related to move_menu variables
+    move_menu_keys = [key for key in info.keys() if re.match(r'move_menu_move_\d+_text\d+', key)]
+
+    # Sort the keys by move number and text index
+    def move_menu_sort_key(key):
+        parts = key.split('_')
+        #print(f'parts: ', parts[3]) 
+        #print(f'parts: ', parts[0]) #move
+        #print(f'parts: ', parts[1]) #menu
+        move_num = int(parts[3])  # Extract move number (e.g., "move_menu_move_1") #move
+        text_index = int(re.search(r'\d+', parts[4]).group())  # Extract numeric part of "textX"
+        return (move_num, text_index)
+
+    # Sort the keys in proper order
+    sorted_keys = sorted(move_menu_keys, key=move_menu_sort_key)
+
+    # Extract move_menu variables and their values in sorted order
+    for key in sorted_keys:
+        move_menu.append(info[key])  # Append the value of the variable
+
+    # Decode all values in order
+    decoded_text = Decode(move_menu)  # Decode the concatenated list of values
+    return decoded_text  # Return the decoded string
+
+
+
 def process_text_box_variables(info):
     # List to hold tuples of (textBox name, decoded value)
     text_boxes = []
@@ -89,8 +131,8 @@ def print_encoding_values():
                 if dec_value != 0:  # Ignore 0x00
                     print(f"Character: '{value}' | Hex: 0x{hex_value} | Decimal: {dec_value}")
 
-# Run the function
-print_encoding_values()
+#print_encoding_values() # print a list of all in game characters and their correponding Hex & Decmal values
+# useful for determining what to do with text box information
 
 
 # TODO create and test a variable in the data.json track the number of moves each pokemon in our party has 
@@ -118,7 +160,7 @@ env.reset()
 
 done = False
 i = 0
-print(env.buttons)
+# print(env.buttons) # ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
 
 logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(message)s')
 
@@ -126,17 +168,24 @@ logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(messa
 done = False
 i = 0
 action = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # Default action with no buttons pressed
-action[4] = 1  # Press A
+action[4] = 1  # Press UP
 obs, _, done, _, info = env.step(action)
-decoded_texts = process_text_box_variables(info)
+# Process the move_menu values in order using the process_move_menu_variables function
+decoded_menu_text = process_move_menu_variables(info)
+
+# Print the decoded menu text
+print(f"Decoded Move Menu Text: {decoded_menu_text}")
+
+#decoded_texts = process_text_box_variables(info)
 
 # Combine the decoded texts into a single string (if desired)
-combined_text = ''.join(decoded_texts)
-print(f"Decoded Text: {combined_text}")
-action[4] = 0  # Press UP
+#combined_text = ''.join(decoded_texts)
+#print(f"Decoded Text: {combined_text}")
+#action[4] = 0  # Stop Pressing Up
 action[8] = 1  # Press A
 env.render()
-obs, _, done, _, info = env.step(action)
+obs, _, done, _, info = env.step(action) 
+# ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
 # main loop
 while not done:
     env.render() # render the game
@@ -144,6 +193,10 @@ while not done:
 
     # every time we do env.step we step forward a frame in the game. 
     # during this frame we can pass in controller input via the action[] array
+    if i == 0: 
+        action[4] = 1
+    if i == 25: 
+        action[8] = 1
     obs, _, done, _, info = env.step(action)
     # after performing this action we get back some information from the games' RAM 
     # this is stored in the variables on the left. 
@@ -155,7 +208,7 @@ while not done:
     if i > 0 and i <= 300:
         action = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # No further inputs
     elif i == 301:
-        # Step 3: After 60 iterations, log the info
+        # Step 3: After 300 iterations, log the info
         logging.info(f"Captured info at step {i}: {info}")
         
         # Step 4: Process the textBox values in order using the process_text_box_variables function
@@ -165,10 +218,16 @@ while not done:
         combined_text = ''.join(decoded_texts)
 
         print(f"Decoded Text: {combined_text}")
+
+        decoded_menu_text = process_move_menu_variables(info)
+
+        # Print the decoded menu text
+        print(f"Decoded Move Menu Text: {decoded_menu_text}")
+
         done = True  # Stop after capturing info and printing decoded text
 
     i += 1
-    #time.sleep(0.1)  # Optional delay for smoother iteration, can be adjusted
+    time.sleep(0.05)  # Optional delay for smoother iteration, can be adjusted
 
 
 #textBox_9 is also where the arrow/space next to fight is
