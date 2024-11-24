@@ -19,3 +19,6 @@ __pycache__/
 
 # Ignore Sync Script
 !sync_game_files.sh
+
+#ignore log
+info_log.txt

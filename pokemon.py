@@ -58,7 +58,7 @@ def find_poke_name(pokemon_id):
     return pokemon_dict.get(pokemon_id, "Unknown Pokémon")
 
 class Pokemon:
-    def __init__(self, pokemon_id, move_1, move_2, move_3, move_4, type_1, level, current_HP, max_HP, hp, defense, attack, ability, speed, special_Defense, special_Attack, type_2=None):
+    def __init__(self, pokemon_id, move_1, move_2, move_3, move_4, type_1, level, current_HP, max_HP, defense, attack, ability, speed, special_Defense, special_Attack, type_2=None):
         self.name = find_poke_name(pokemon_id)
         self.move1 = move_1
         self.move2 = move_2
@@ -69,7 +69,6 @@ class Pokemon:
         self.level = level
         self.current_HP = current_HP
         self.max_HP = max_HP
-        self.hp = hp
         self.defense = defense
         self.attack = attack
         self.ability = ability
@@ -88,7 +87,6 @@ vhagar = Pokemon(
     level = 100,
     current_HP = 100,
     max_HP = 120,
-    hp = 120,
     defense = 100,
     attack = 150,
     ability = "Fire Breath",
