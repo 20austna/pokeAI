@@ -229,6 +229,142 @@ while not done:
     i += 1
     time.sleep(0.05)  # Optional delay for smoother iteration, can be adjusted
 
+"""
+class Move:
+    def __init__(self, name, move_type, power, accuracy, move_pp, attack_type, description):
+        ""
+        Initialize a new Move object.
+
+        :param name: Name of the move (str)
+        :param move_type: Type of the move (e.g., Fire, Water) (str)
+        :param power: Power of the move (int)
+        :param accuracy: Accuracy percentage of the move (int)
+        :param move_pp: Maximum Power Points (PP) for the move (int)
+        :param attack_type: Attack type (Physical or Special) (str)
+        :param move_description: decsription of the move (str)S
+        ""
+        self.name = name
+        self.move_type = move_type
+        self.power = power
+        self.accuracy = accuracy
+        self.move_pp = move_pp
+        self.attack_type = attack_type
+        self.description = description
+
+    def __str__(self):
+        ""
+        String representation of the Move object.
+        ""
+        return (f"Move(name={self.name}, type={self.move_type}, power={self.power}, "
+                f"accuracy={self.accuracy}, PP={self.move_pp}, attack type={self.attack_type}, "
+                f"description={self.move_description})")
+"""
+
+class Move:
+    def __init__(self, name, move_type, power, accuracy, move_pp, attack_type, description=""):
+        """
+        Initialize a new Move object.
+
+        :param name: Name of the move (str)
+        :param move_type: Type of the move (e.g., Fire, Water) (str)
+        :param power: Power of the move (int)
+        :param accuracy: Accuracy percentage of the move (int)
+        :param move_pp: Maximum Power Points (PP) for the move (int)
+        :param attack_type: Attack type (Physical or Special) (str)
+        :param description: A brief description of the move (str)
+        """
+        self._data = {
+            "name": name,
+            "move_type": move_type,
+            "power": power,
+            "accuracy": accuracy,
+            "move_pp": move_pp,
+            "attack_type": attack_type,
+            "description": description,
+        }
+
+    def __getitem__(self, key):
+        """
+        Get an item by key.
+        """
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        """
+        Set an item by key.
+        """
+        self._data[key] = value
+
+    def __delitem__(self, key):
+        """
+        Delete an item by key.
+        """
+        del self._data[key]
+
+    def __iter__(self):
+        """
+        Return an iterator over the keys.
+        """
+        return iter(self._data)
+
+    def __len__(self):
+        """
+        Return the number of items.
+        """
+        return len(self._data)
+
+    def __str__(self):
+        """
+        String representation of the Move object.
+        """
+        return f"Move({self._data})"
+
+    def keys(self):
+        """
+        Return the keys of the dictionary.
+        """
+        return self._data.keys()
+
+    def values(self):
+        """
+        Return the values of the dictionary.
+        """
+        return self._data.values()
+
+    def items(self):
+        """
+        Return the items of the dictionary.
+        """
+        return self._data.items()
+
+# Example object creation
+flamethrower = Move(
+    name="Flamethrower",
+    move_type="Fire",
+    power=90,
+    accuracy=100,
+    move_pp=15,
+    attack_type="Special",
+    description="A powerful fire attack that may inflict a burn."
+)
+
+# Accessing as a dictionary
+print(flamethrower["name"])         # Output: Flamethrower
+print(flamethrower["description"])  # Output: A powerful fire attack that may inflict a burn.
+
+# Setting a new value
+flamethrower["power"] = 95
+print(flamethrower["power"])        # Output: 95
+
+# Iterating over keys
+for key in flamethrower:
+    print(key, flamethrower[key])
+
+# Viewing all items
+print(flamethrower.items())
+
+# Printing the object to see its details
+#print(flamethrower)
 
 #textBox_9 is also where the arrow/space next to fight is
 #textBox_15 is also where the arrow/space next to 
