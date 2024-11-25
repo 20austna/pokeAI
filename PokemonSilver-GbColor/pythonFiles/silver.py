@@ -1,8 +1,8 @@
 #!/usr/bin/python 
 
-import retrp.data 
+import retro
 import os
 import time 
 
 
-env = retro.make('rom.gbc')
+#env = retro.make('rom.gbc')

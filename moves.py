@@ -55,3 +55,110 @@ def find_move_name(move_id):
     Given a move ID, return the corresponding move name from the move_dict.
     """
     return move_dict.get(move_id, "Unknown Move")
+
+class Move:
+    def __init__(self, id, move_type, power, accuracy, move_pp, attack_type, description=""):
+        """
+        Initialize a new Move object.
+
+        :param id: id
+        :param move_type: Type of the move (e.g., Fire, Water) (str)
+        :param power: Power of the move (int)
+        :param accuracy: Accuracy percentage of the move (int)
+        :param move_pp: Maximum Power Points (PP) for the move (int)
+        :param attack_type: Attack type (Physical or Special) (str)
+        :param description: A brief description of the move (str)
+        """
+        self._data = {
+            "id": id,
+            "name" : find_move_name(id),
+            "move_type": move_type,
+            "power": power,
+            "accuracy": accuracy,
+            "move_pp": move_pp,
+            "attack_type": attack_type,
+            "description": description,
+        }
+
+    def __getitem__(self, key):
+        """
+        Get an item by key.
+        """
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        """
+        Set an item by key.
+        """
+        self._data[key] = value
+
+    def __delitem__(self, key):
+        """
+        Delete an item by key.
+        """
+        del self._data[key]
+
+    def __iter__(self):
+        """
+        Return an iterator over the keys.
+        """
+        return iter(self._data)
+
+    def __len__(self):
+        """
+        Return the number of items.
+        """
+        return len(self._data)
+
+    def __str__(self):
+        """
+        String representation of the Move object.
+        """
+        return f"Move({self._data})"
+
+    def keys(self):
+        """
+        Return the keys of the dictionary.
+        """
+        return self._data.keys()
+
+    def values(self):
+        """
+        Return the values of the dictionary.
+        """
+        return self._data.values()
+
+    def items(self):
+        """
+        Return the items of the dictionary.
+        """
+        return self._data.items()
+
+# Example object creation
+flamethrower = Move(
+    id=53,
+    move_type="Fire",
+    power=90,
+    accuracy=100,
+    move_pp=15,
+    attack_type="Special",
+    description="A powerful fire attack that may inflict a burn."
+)
+
+# Accessing as a dictionary
+print(flamethrower["name"])         # Output: Flamethrower
+print(flamethrower["description"])  # Output: A powerful fire attack that may inflict a burn.
+
+# Setting a new value
+flamethrower["power"] = 95
+print(flamethrower["power"])        # Output: 95
+
+# Iterating over keys
+for key in flamethrower:
+    print(key, flamethrower[key])
+
+# Viewing all items
+print(flamethrower.items())
+
+# Printing the object to see its details
+#print(flamethrower)
