@@ -210,14 +210,6 @@ while not done:
     elif i == 301:
         # Step 3: After 300 iterations, log the info
         logging.info(f"Captured info at step {i}: {info}")
-        
-        # Step 4: Process the textBox values in order using the process_text_box_variables function
-        decoded_texts = process_text_box_variables(info)
-
-        # Combine the decoded texts into a single string (if desired)
-        combined_text = ''.join(decoded_texts)
-
-        print(f"Decoded Text: {combined_text}")
 
         decoded_menu_text = process_move_menu_variables(info)
 
