@@ -6,12 +6,12 @@ import sys
 import logging
 import time
 import re  # For regex matching
+from pynput import keyboard
 from pokemon import Pokemon
 
 def process_move_menu_variables(info):
     """
-    Process the move_menu variables from the `info` dictionary with simplified naming conventions, 
-    decode them, and return a combined string.
+    Process the move_menu variables from the `info` dictionary. 
 
     Args:
         info (dict): Dictionary containing the game's RAM variables and their values.
@@ -19,10 +19,10 @@ def process_move_menu_variables(info):
     Returns:
         str: A single string representing the decoded move menu contents.
     """
-    import re
-
+    # List to hold the concatenated values for each move
+    moves = []
     # List to hold tuples of (variable name, decoded value)
-    move_menu = []
+    #move_menu = []
 
     # Extract keys related to move_menu variables
     move_menu_keys = [key for key in info.keys() if re.match(r'move_menu_move_\d+_text\d+', key)]
@@ -30,9 +30,6 @@ def process_move_menu_variables(info):
     # Sort the keys by move number and text index
     def move_menu_sort_key(key):
         parts = key.split('_')
-        #print(f'parts: ', parts[3]) 
-        #print(f'parts: ', parts[0]) #move
-        #print(f'parts: ', parts[1]) #menu
         move_num = int(parts[3])  # Extract move number (e.g., "move_menu_move_1") #move
         text_index = int(re.search(r'\d+', parts[4]).group())  # Extract numeric part of "textX"
         return (move_num, text_index)
@@ -40,13 +37,33 @@ def process_move_menu_variables(info):
     # Sort the keys in proper order
     sorted_keys = sorted(move_menu_keys, key=move_menu_sort_key)
 
-    # Extract move_menu variables and their values in sorted order
+    current_move = []
+    current_move_num = None
+
     for key in sorted_keys:
-        move_menu.append(info[key])  # Append the value of the variable
+        move_num = int(key.split('_')[3])  # Extract move number from the key
+        if current_move_num is None or move_num == current_move_num:
+            current_move.append(info[key])
+        else:
+        # Decode the current move and add it to the list
+            moves.append(Decode(current_move))
+            current_move = [info[key]]  # Start a new move
+        current_move_num = move_num
+
+    # Don't forget to decode the last move
+    if current_move:
+        moves.append(Decode(current_move))
+
+    # Join moves with line breaks
+    return "\n".join(moves)
+
+    # Extract move_menu variables and their values in sorted order
+    #for key in sorted_keys:
+    #    move_menu.append(info[key])  # Append the value of the variable
 
     # Decode all values in order
-    decoded_text = Decode(move_menu)  # Decode the concatenated list of values
-    return decoded_text  # Return the decoded string
+    #decoded_text = Decode(move_menu)  # Decode the concatenated list of values
+    #return decoded_text  # Return the decoded string
 
 
 
@@ -121,6 +138,8 @@ def create_encoding_chart():
     ]
     return chart
 
+# useful for determining what to do with text box information
+# print a list of all in game characters and their correponding Hex & Decmal values
 def print_encoding_values():
     chart = create_encoding_chart()
     for row_index, row in enumerate(chart):
@@ -131,16 +150,13 @@ def print_encoding_values():
                 if dec_value != 0:  # Ignore 0x00
                     print(f"Character: '{value}' | Hex: 0x{hex_value} | Decimal: {dec_value}")
 
-#print_encoding_values() # print a list of all in game characters and their correponding Hex & Decmal values
-# useful for determining what to do with text box information
-
-
 # TODO create and test a variable in the data.json track the number of moves each pokemon in our party has 
 # TODO create and test a varible in the data.json to track the number of pokemon in our party
 # https://datacrystal.tcrf.net/wiki/Pok%C3%A9mon_Gold_and_Silver/RAM_map
 # TODO create party class(consists of numPokemon Pokemon)
 # TODO create pokemon class(consists of a pokemon with numMoves moves and all the pokemon's stats)
 # TODO further investigate using bulbapedia API
+# TODO further investigate using pokeAPI
 # https://bulbapedia.bulbagarden.net/wiki/Special:ApiSandbox
 # https://www.mediawiki.org/wiki/API:Main_page
 # TODO create hardcoded type chart
@@ -149,8 +165,6 @@ def print_encoding_values():
 # TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
 # in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
 # but first i need to figure out various text boxes. 
-# TODO moves class
-# TODO how does chat gpt call information from classes we have -- issue made
 
 game='PokemonSilver-GbColor'
 data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json"
@@ -158,69 +172,86 @@ scenario_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stabl
 env = retro.make(game, 'Battle.state') #in the Battle.state file we have 1 pokemon, Totodile, which is our current pokemon. 
 env.reset()
 
-done = False
-i = 0
-# print(env.buttons) # ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
+# Define the action array
+action = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # Default action with no buttons pressed
 
+# Map keyboard keys to game actions
+key_to_action = {
+    'z': 0,      # B
+    'tab': 2,    # SELECT
+    'enter': 3,  # START
+    'up': 4,     # UP
+    'down': 5,   # DOWN
+    'left': 6,   # LEFT
+    'right': 7,  # RIGHT
+    'x': 8       # A
+}
+
+# State to track pressed keys
+keys_pressed = set()
+exit_flag = [False]  # Use a mutable object to allow modification inside handlers
+
+
+# Key press event handler
+def on_press(key):
+    try:
+        key_str = key.char if hasattr(key, 'char') else key.name
+        if key_str in key_to_action: 
+            keys_pressed.add(key_str) 
+        elif key_str == 'esc': # Leave loop when 'esc' is pressed
+            exit_flag[0] = True
+        elif key_str == 'i':  # Log information when 'i' is pressed
+            log_game_info()
+        elif key_str == 'm':  # Print menu information when 'm' is pressed
+            menu_text_info() 
+    except AttributeError:
+        pass
+
+# Key release event handler
+def on_release(key):
+    try:
+        key_str = key.char if hasattr(key, 'char') else key.name
+        if key_str in key_to_action and key_str in keys_pressed:
+            keys_pressed.remove(key_str)
+    except AttributeError:
+        pass
+
+# Logging function for game info
+def log_game_info():
+    logging.info(f"Captured info: {info}")
+    print(f"Captured info: {info}")
+
+def menu_text_info():
+        decoded_menu_text = process_move_menu_variables(info)
+        # Print the decoded menu text
+        print(f"\n{decoded_menu_text}")
+
+# Set up logging for game info
 logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(message)s')
 
+# Start listening for keyboard inputs
+listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+listener.start()
 
 done = False
 i = 0
-action = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # Default action with no buttons pressed
-action[4] = 1  # Press UP
-obs, _, done, _, info = env.step(action)
-# Process the move_menu values in order using the process_move_menu_variables function
-decoded_menu_text = process_move_menu_variables(info)
-
-# Print the decoded menu text
-print(f"Decoded Move Menu Text: {decoded_menu_text}")
-
-#decoded_texts = process_text_box_variables(info)
-
-# Combine the decoded texts into a single string (if desired)
-#combined_text = ''.join(decoded_texts)
-#print(f"Decoded Text: {combined_text}")
-#action[4] = 0  # Stop Pressing Up
-action[8] = 1  # Press A
-env.render()
-obs, _, done, _, info = env.step(action) 
 # ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
 # main loop
-while not done:
-    env.render() # render the game
-    action = [0,0,0,0,0,0,0,0,0] # all controller inputs are set to off, try print(env.buttons) for more info
+while not done and not exit_flag[0]:
+    env.render()
 
-    # every time we do env.step we step forward a frame in the game. 
-    # during this frame we can pass in controller input via the action[] array
-    if i == 0: 
-        action[4] = 1
-    if i == 25: 
-        action[8] = 1
+    #update the action array based on keys pressed
+    action = [0] * 9 # Reset actions
+    for key in keys_pressed:
+        # see on_press(key) and key_to_action for all possible inputs
+        action[key_to_action[key]] = 1 #set corresponding action to active
+
+    # Perform the action in the environment
     obs, _, done, _, info = env.step(action)
-    # after performing this action we get back some information from the games' RAM 
-    # this is stored in the variables on the left. 
-    # since this isnt a traditional reinforcement learning project we dont need to keep track rewards.
-    # what we really care about is is the info dictionary 
-    # which contains the names of variables from data.json file and the values at their memory addresses in RAM
-
-    # Step 2: Continue for 60 iterations after pressing "A" with no further inputs
-    if i > 0 and i <= 300:
-        action = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # No further inputs
-    elif i == 301:
-        # Step 3: After 300 iterations, log the info
-        logging.info(f"Captured info at step {i}: {info}")
-
-        decoded_menu_text = process_move_menu_variables(info)
-
-        # Print the decoded menu text
-        print(f"Decoded Move Menu Text: {decoded_menu_text}")
-
-        done = True  # Stop after capturing info and printing decoded text
-
-    i += 1
-    time.sleep(0.05)  # Optional delay for smoother iteration, can be adjusted
-
+    
+listener.stop()
+env.close()
+print("Game loop exited.")
 """
 class Move:
     def __init__(self, name, move_type, power, accuracy, move_pp, attack_type, description):
