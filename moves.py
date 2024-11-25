@@ -162,3 +162,34 @@ print(flamethrower.items())
 
 # Printing the object to see its details
 #print(flamethrower)
+
+"""
+class Move:
+    def __init__(self, name, move_type, power, accuracy, move_pp, attack_type, description):
+        ""
+        Initialize a new Move object.
+
+        :param name: Name of the move (str)
+        :param move_type: Type of the move (e.g., Fire, Water) (str)
+        :param power: Power of the move (int)
+        :param accuracy: Accuracy percentage of the move (int)
+        :param move_pp: Maximum Power Points (PP) for the move (int)
+        :param attack_type: Attack type (Physical or Special) (str)
+        :param move_description: decsription of the move (str)S
+        ""
+        self.name = name
+        self.move_type = move_type
+        self.power = power
+        self.accuracy = accuracy
+        self.move_pp = move_pp
+        self.attack_type = attack_type
+        self.description = description
+
+    def __str__(self):
+        ""
+        String representation of the Move object.
+        ""
+        return (f"Move(name={self.name}, type={self.move_type}, power={self.power}, "
+                f"accuracy={self.accuracy}, PP={self.move_pp}, attack type={self.attack_type}, "
+                f"description={self.move_description})")
+"""
