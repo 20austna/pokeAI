@@ -164,13 +164,13 @@ from dotenv import load_dotenv
 # create file named .env or in terminal touch .env
 # code .env
 # OPENAI_API=your_api_key_here
-# to use it, do pip install python-dotenv
+# to use it, do pip install python-dotenv --quiet
 
 
 load_dotenv()
 
-# Set OpenAI API key
-openai.api_key = os.getenv("OPENAI_API")
+# Set OpenAI API key and change to your API key name
+openai.api_key = os.getenv("PokemonAPI")
 if not openai.api_key:
     raise ValueError("Missing OpenAI API key. Set OPENAI_API in your environment or .env file.")
 
@@ -189,7 +189,7 @@ pokemon_data = {
             "Flamethrower": {"type": "Fire", "power": 95},  # Move details (type and base power)
             "Swift": {"type": "Normal", "power": 60},
             "Thunder Punch": {"type": "Electric", "power": 75},
-            # "Earthquake": {"type": "Ground", "power": 100},
+            "Earthquake": {"type": "Ground", "power": 100},
         },
     },
     "Ampharos": {
@@ -302,8 +302,8 @@ functions = [
     }
 ]
 
-# OpenAI API client
-client = OpenAI(api_key=os.environ["OPENAI_API"])
+# OpenAI API client change to your API key name
+client = OpenAI(api_key=os.environ["PokemonAPI"])
 
 # Initial messages and OpenAI call
 messages = [
@@ -318,17 +318,20 @@ response = client.chat.completions.create(
     function_call="auto",
 )
 
-# Print the response to debug
-# print("OpenAI response:", response)
+# Convert the response to a dictionary
+# response_dict = response.to_dict()
 
-# Ensure function arguments are extracted correctly
-if hasattr(message, "function_call") and message.function_call is not None:
-    function_name = message.function_call.name
-    function_args = json.loads(message.function_call.arguments)
+# Now you can print the response as a nicely formatted JSON
+# print(json.dumps(response_dict, indent=2))
+# print(response.choices[0].message)
+
+if hasattr(response.choices[0].message, "function_call") and response.choices[0].message.function_call is not None:
+    function_name = response.choices[0].message.function_call.name
+    function_args = json.loads(response.choices[0].message.function_call.arguments)
 
     function_response = FUNCTIONS[function_name](**function_args)
 
-    messages.append({"role": "assistant", "content": message.content or "AI called a function without returning content."})
+    messages.append({"role": "assistant", "content": response.choices[0].message.content or "AI called a function without returning content."})
     messages.append(
         {
             "role": "function",
@@ -347,4 +350,4 @@ if hasattr(message, "function_call") and message.function_call is not None:
     )
     print(final_response.choices[0].message.content)
 else:
-    print(message.content or "AI response has no content.")
+    print(response.choices[0].message.content or "AI response has no content.")
