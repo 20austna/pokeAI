@@ -147,3 +147,204 @@ def type_effectiveness(move_type, target_type):
         float: Effectiveness multiplier (e.g., 2.0, 0.5, 1.0).
     """
     return type_chart.get((move_type, target_type), 1.0)
+
+# need to install this to get it to work
+# !pip install langchain langchain-openai openai langchain-community tiktoken faiss-cpu --quiet
+
+import os
+import json
+import openai
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (optional)
+# if you don't have your api key in a .env file. create a file 
+# and store your api key in it
+
+# make sure you are in same directory as the .py file
+# create file named .env or in terminal touch .env
+# code .env
+# OPENAI_API=your_api_key_here
+# to use it, do pip install python-dotenv
+
+
+load_dotenv()
+
+# Set OpenAI API key
+openai.api_key = os.getenv("OPENAI_API")
+if not openai.api_key:
+    raise ValueError("Missing OpenAI API key. Set OPENAI_API in your environment or .env file.")
+
+
+import os
+import json
+from openai import OpenAI
+
+# Define Pokémon data (Gen 2 specific)
+# This dictionary contains the data of Pokémon with their stats, types, and available moves.
+pokemon_data = {
+    "Typhlosion": {
+        "level": 100,  # Pokémon's level
+        "type": ["Fire"],  # Pokémon's type(s)
+        "moves": {  # Moves available for the Pokémon
+            "Flamethrower": {"type": "Fire", "power": 95},  # Move details (type and base power)
+            "Swift": {"type": "Normal", "power": 60},
+            "Thunder Punch": {"type": "Electric", "power": 75},
+            # "Earthquake": {"type": "Ground", "power": 100},
+        },
+    },
+    "Ampharos": {
+        "level": 100,
+        "type": ["Electric"],
+        "moves": {
+            "Thunderbolt": {"type": "Electric", "power": 95},
+            "Fire Punch": {"type": "Fire", "power": 75},
+            "Focus Blast": {"type": "Fighting", "power": 120},
+            "reflect": {"type": "Psychic", "power": 0},  # Non-damaging move (power = 0)
+        },
+    },
+}
+
+# Gen 2 type chart
+# Defines the effectiveness of Pokémon moves against specific types.
+type_chart = {
+    "Normal": {"strong_against": [], "weak_against": ["Rock", "Steel"], "immune_to": ["Ghost"]},
+    "Fire": {"strong_against": ["Grass", "Bug", "Ice", "Steel"], "weak_against": ["Water", "Rock", "Fire", "Dragon"], "immune_to": []},
+    "Water": {"strong_against": ["Fire", "Rock", "Ground"], "weak_against": ["Water", "Grass", "Dragon"], "immune_to": []},
+    "Electric": {"strong_against": ["Water", "Flying"], "weak_against": ["Electric", "Grass", "Dragon"], "immune_to": ["Ground"]},
+    "Grass": {"strong_against": ["Water", "Rock", "Ground"], "weak_against": ["Fire", "Grass", "Poison", "Flying", "Bug", "Dragon", "Steel"], "immune_to": []},
+    "Ice": {"strong_against": ["Grass", "Ground", "Flying", "Dragon"], "weak_against": ["Fire", "Water", "Ice", "Steel"], "immune_to": []},
+    "Fighting": {"strong_against": ["Normal", "Ice", "Rock", "Dark", "Steel"], "weak_against": ["Poison", "Flying", "Psychic", "Bug"], "immune_to": ["Ghost"]},
+    "Poison": {"strong_against": ["Grass"], "weak_against": ["Poison", "Ground", "Rock", "Ghost"], "immune_to": ["Steel"]},
+    "Ground": {"strong_against": ["Fire", "Electric", "Poison", "Rock", "Steel"], "weak_against": ["Grass", "Bug"], "immune_to": ["Flying"]},
+    "Flying": {"strong_against": ["Grass", "Fighting", "Bug"], "weak_against": ["Electric", "Rock", "Steel"], "immune_to": []},
+    "Psychic": {"strong_against": ["Fighting", "Poison"], "weak_against": ["Psychic", "Steel"], "immune_to": ["Dark"]},
+    "Bug": {"strong_against": ["Grass", "Psychic", "Dark"], "weak_against": ["Fire", "Fighting", "Poison", "Flying", "Ghost", "Steel"], "immune_to": []},
+    "Rock": {"strong_against": ["Fire", "Ice", "Flying", "Bug"], "weak_against": ["Fighting", "Ground", "Steel"], "immune_to": []},
+    "Ghost": {"strong_against": ["Psychic", "Ghost"], "weak_against": ["Dark", "Steel"], "immune_to": ["Normal"]},
+    "Dragon": {"strong_against": ["Dragon"], "weak_against": ["Steel"], "immune_to": []},
+    "Dark": {"strong_against": ["Psychic", "Ghost"], "weak_against": ["Fighting", "Bug", "Dark"], "immune_to": []},
+    "Steel": {"strong_against": ["Ice", "Rock"], "weak_against": ["Fire", "Water", "Electric", "Steel"], "immune_to": ["Poison"]},
+}
+
+# Pokémon data and type chart remain unchanged as defined in your code.
+
+# Function to calculate move damage based on Gen 2 type chart, move power, and STAB.
+def calculate_damage(attacker, defender, move):
+    # Get the move details from the attacker's move set
+    move_data = attacker["moves"].get(move)
+    if not move_data:
+        return 0
+
+    move_type = move_data["type"]
+    defender_types = defender["type"]
+
+    # Determine type effectiveness multiplier
+    effectiveness = 1
+    for defender_type in defender_types:
+        if defender_type in type_chart[move_type]["strong_against"]:
+            effectiveness *= 2
+        elif defender_type in type_chart[move_type]["weak_against"]:
+            effectiveness *= 0.5
+        elif defender_type in type_chart[move_type]["immune_to"]:
+            effectiveness = 0
+
+    # Check for Same Type Attack Bonus (STAB)
+    stab = 1.5 if move_type in attacker["type"] else 1
+
+    # Calculate total damage
+    return move_data["power"] * effectiveness * stab
+
+
+# Function to choose the best move for an attacker against a defender.
+def choose_move(attacker_name, defender_name):
+    attacker = pokemon_data[attacker_name]
+    defender = pokemon_data[defender_name]
+
+    move_damages = {}  # To store move damage calculations
+    best_move = None
+    max_damage = 0
+
+    for move in attacker["moves"]:
+        damage = calculate_damage(attacker, defender, move)
+        move_damages[move] = damage
+        if damage > max_damage:
+            max_damage = damage
+            best_move = move
+
+    return {
+        "action": "choose_move",
+        "attacker": attacker_name,
+        "defender": defender_name,
+        "move_damages": move_damages,
+        "chosen_move": best_move,
+        "estimated_damage": max_damage,
+    }
+
+
+# Define mapping of functions for dynamic execution
+FUNCTIONS = {
+    "choose_move": choose_move,
+}
+
+# Define a function descriptor for OpenAI's function-calling feature
+functions = [
+    {
+        "name": "choose_move",
+        "description": "Choose the best move for the attacker Pokémon.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "attacker_name": {"type": "string", "description": "The name of the attacking Pokémon."},
+                "defender_name": {"type": "string", "description": "The name of the defending Pokémon."},
+            },
+            "required": ["attacker_name", "defender_name"],  # Required parameters for this function
+        },
+    }
+]
+
+# OpenAI API client
+client = OpenAI(api_key=os.environ["OPENAI_API"])
+
+# Initial messages and OpenAI call
+messages = [
+    {"role": "system", "content": "You are a Pokémon battle assistant, specialized in Gen 2 battles."},
+    {"role": "user", "content": "My Typhlosion is battling Ampharos. List all of Typhlosion's moves with the calculated damage for each move. Then, recommend the most optimal move."},
+]
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=messages,
+    functions=functions,
+    function_call="auto",
+)
+
+# Print the response to debug
+# print("OpenAI response:", response)
+
+# Ensure function arguments are extracted correctly
+if hasattr(message, "function_call") and message.function_call is not None:
+    function_name = message.function_call.name
+    function_args = json.loads(message.function_call.arguments)
+
+    function_response = FUNCTIONS[function_name](**function_args)
+
+    messages.append({"role": "assistant", "content": message.content or "AI called a function without returning content."})
+    messages.append(
+        {
+            "role": "function",
+            "name": function_name,
+            "content": json.dumps(function_response),
+        }
+    )
+    #debugging
+    for i, msg in enumerate(messages):
+        if not isinstance(msg["content"], str):
+            print(f"Invalid content in message[{i}]:", msg)
+
+    final_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+    )
+    print(final_response.choices[0].message.content)
+else:
+    print(message.content or "AI response has no content.")
