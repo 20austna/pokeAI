@@ -22,3 +22,5 @@ __pycache__/
 
 #ignore log
 info_log.txt
+
+.env

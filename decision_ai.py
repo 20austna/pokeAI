@@ -324,30 +324,31 @@ response = client.chat.completions.create(
 # Now you can print the response as a nicely formatted JSON
 # print(json.dumps(response_dict, indent=2))
 # print(response.choices[0].message)
+def make_decision():
+    if hasattr(response.choices[0].message, "function_call") and response.choices[0].message.function_call is not None:
+        function_name = response.choices[0].message.function_call.name
+        function_args = json.loads(response.choices[0].message.function_call.arguments)
 
-if hasattr(response.choices[0].message, "function_call") and response.choices[0].message.function_call is not None:
-    function_name = response.choices[0].message.function_call.name
-    function_args = json.loads(response.choices[0].message.function_call.arguments)
+        function_response = FUNCTIONS[function_name](**function_args)
 
-    function_response = FUNCTIONS[function_name](**function_args)
+        messages.append({"role": "assistant", "content": response.choices[0].message.content or "AI called a function without returning content."})
+        messages.append(
+            {
+                "role": "function",
+                "name": function_name,
+                "content": json.dumps(function_response),
+            }
+        )
+        #debugging
+        for i, msg in enumerate(messages):
+            if not isinstance(msg["content"], str):
+                print(f"Invalid content in message[{i}]:", msg)
 
-    messages.append({"role": "assistant", "content": response.choices[0].message.content or "AI called a function without returning content."})
-    messages.append(
-        {
-            "role": "function",
-            "name": function_name,
-            "content": json.dumps(function_response),
-        }
-    )
-    #debugging
-    for i, msg in enumerate(messages):
-        if not isinstance(msg["content"], str):
-            print(f"Invalid content in message[{i}]:", msg)
+        final_response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+        )
+        return final_response.choices[0].message.content
+    else:
+        return response.choices[0].message.content or "AI response has no content."
 
-    final_response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages,
-    )
-    print(final_response.choices[0].message.content)
-else:
-    print(response.choices[0].message.content or "AI response has no content.")
