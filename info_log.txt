@@ -72,3 +72,21 @@ HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/borg/vretro/lib/python3.12/site-packages/pynput/_util/__init__.py", line 229, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/borg/vretro/lib/python3.12/site-packages/pynput/_util/xorg.py", line 470, in _handler
+    self._handle(self._display_stop, event)
+  File "/home/borg/vretro/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle
+    self.on_press(key)
+  File "/home/borg/vretro/lib/python3.12/site-packages/pynput/_util/__init__.py", line 145, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/borg/cse434/pokeAI/test.py", line 67, in on_press
+    menu_text_info()
+  File "/home/borg/cse434/pokeAI/test.py", line 86, in menu_text_info
+    decoded_menu_text = process_move_menu_variables(info)
+                                                    ^^^^
+NameError: name 'info' is not defined

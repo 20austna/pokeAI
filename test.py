@@ -5,6 +5,8 @@ import struct
 import sys
 import logging
 import time
+import asyncio
+import queue
 from processText import process_move_menu_variables, Decode, print_encoding_values
 from pynput import keyboard
 from pokemon import Pokemon
@@ -76,16 +78,6 @@ def on_release(key):
     except AttributeError:
         pass
 
-# Logging function for game info
-def log_game_info():
-    logging.info(f"Captured info: {info}")
-    print(f"Captured info: {info}")
-
-def menu_text_info():
-        decoded_menu_text = process_move_menu_variables(info)
-        # Print the decoded menu text
-        print(f"\n{decoded_menu_text}")
-
 # Set up logging for game info
 logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(message)s')
 
@@ -96,6 +88,8 @@ listener.start()
 """
 done = False
 i = 10
+q = queue.Queue()
+made_determ = False
 # ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
 # main loop
 while not done and not exit_flag[0]:
@@ -108,61 +102,172 @@ while not done and not exit_flag[0]:
         action[key_to_action[key]] = 1 #set corresponding action to active
     
     # Perform the action in the environment
-    obs, _, done, _, info = env.step(action)
+    _, _, _, _, info = env.step(action)
     
-    if info["determinator"] == 121 and i >= 10: 
+    if info["determinator"] == 121 and not made_determ: 
         #print(make_decision())
         print(f"Made decision{i}")
         action[8] = 1
-        obs, _, done, _, info = env.step(action)
-        obs, _, done, _, info = env.step(action)
+        q.put(action)
+        q.put(action)
         i = 1
+        made_determ = True
     else:
-        print("STOP IT NO MORE AI THINGS")
         i = i + 1
+        if q.empty():
+            print("STOP IT NO MORE AI THINGS")
+            made_determ = False
+            
+        else:
+            _, _, _, _, info = env.step(q.get())
+            print(f"Getting Queue{i}")
+            if q.empty() and info["determinator"] == 121:
+                print("Uh oh you got through the queue but determinator hasn't updated yet.")
+            
+
     
 listener.stop()
 env.close()
-print("Game loop exited.")
-"""
+print("Game loop exited.")"""
 
-import asyncio
-
-done = False
-i = 10
-decision_cooldown = 0  # Cooldown counter for decisions
-
-async def main_loop():
-    global done, i, decision_cooldown
-
-    while not done and not exit_flag[0]: 
+"""async def render_environment(env):
+    #Task to render the environment and handle inputs.
+    global keys_pressed, info, made_determ
+    while not exit_flag[0]:
+        # Render the game
+        #if made_determ:
+        #    await check_determinator
+        print(f"determinator is {info["determinator"]}")
         env.render()
 
-        # Update the action array based on keys pressed
-        action = [0] * 9  # Reset actions
+        # Update action array based on keys pressed
+        action = [0] * 9
         for key in keys_pressed:
-            action[key_to_action[key]] = 1  # Set corresponding action to active
-
+            action[key_to_action[key]] = 1
+        
         # Perform the action in the environment
-        obs, _, done, _, info = env.step(action)
+        _, _, done, _, info = env.step(action)
 
-        if info["determinator"] == 121: 
-            # Make a decision
-            print(f"Made decision{i}")
-            action[8] = 1
-            obs, _, done, _, info = env.step(action)
-            obs, _, done, _, info = env.step(action)
+        # Stop if done
+        if done:
+            exit_flag[0] = True
+
+        await asyncio.sleep(0.016) 
+
+async def check_determinator(env):
+    global info
+    #global info, made_determ
+    #Task to check info['determinator'] and make AI decisions.
+    i = 10  # Cooldown logic
+    while not exit_flag[0]:
+        env.render()
+        _, _, _, _, info = env.step([0] * 9)  # Fetch latest info
+
+        if info.get("determinator") == 121:
+            print(f"Made decision {i}")
+            # Execute decision-making actions
+            determ_action = [0] * 9
+            determ_action[8] = 1  # Example decision: press 'A'
+            #while(info.get("determinator") == 121):
+            #    _, _, _, _, info = env.step(determ_action)
+            #print("we pressed A!")
+            _, _, _, _, info = env.step(determ_action)
+            await asyncio.sleep(0.5)
+            _, _, _, _, info = env.step(determ_action)
+            await asyncio.sleep(0.5)
+
             i = 1
-            #decision_cooldown = 20  # Set cooldown steps
-            await asyncio.sleep(1)  # Add a brief pause before continuing
+            #made_determ = True
         else:
-            if decision_cooldown > 0:
-                decision_cooldown -= 1  # Decrease cooldown on each loop
             print("STOP IT NO MORE AI THINGS")
             i += 1
+            #made_determ = False
 
-        # Small delay to prevent spinning the loop too fast
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.2)  # Adjust timing as needed
 
-# Run the asyncio event loop
-asyncio.run(main_loop())
+async def main(env):
+    #Main function to run tasks concurrently.
+    await asyncio.gather(
+        render_environment(env),
+        check_determinator(env)
+    )
+
+made_determ = False
+_, _, done, _, info = env.step([0] * 9)
+asyncio.run(main(env))"""
+
+import asyncio
+from collections import deque
+
+action_queue = deque()
+action_taken = False  # State variable to track if an action has been taken
+
+async def render_environment(env):
+    """Task to render the environment and handle inputs."""
+    global keys_pressed
+    while not exit_flag[0]:
+        print("Render_env")
+        #env.render()
+
+        # Update action array based on keys pressed
+        action = [0] * 9
+        for key in keys_pressed:
+            action[key_to_action[key]] = 1
+        
+        # Perform the action in the environment
+        _, _, done, _, info = env.step(action)
+
+        # Stop if done
+        if done:
+            exit_flag[0] = True
+
+        await asyncio.sleep(1/60)  # Adjust as necessary
+
+async def check_determinator(env):
+    """Task to check info['determinator'] and make AI decisions."""
+    global action_taken
+    while not exit_flag[0]:
+        _, _, _, _, info = env.step([0] * 9)  # Fetch latest info without doing any action
+        
+        if info.get("determinator") == 121 and not action_taken:
+            print(f"Making decision based on determinator")
+            action = [0] * 9
+            action[8] = 1  # Example action: press 'A'
+            action_queue.append(action)  # Queue the action
+            action_queue.append(action)  # Queue the action
+            action_taken = True  # Set action taken to True
+
+            # Allow some time for the game to process the action
+            await asyncio.sleep(3)  # Adjust this delay based on how long you need
+            
+        elif info.get("determinator") != 121:
+            action_taken = False  # Reset action_taken when determinator changes
+
+        await asyncio.sleep(0.1)  # Control how often to check
+
+async def process_actions(env):
+    """Task to process actions from the queue."""
+    while not exit_flag[0]:
+        while action_queue:  # Process all available actions
+            #env.render()
+            action = action_queue.popleft()  # Get the next action from the queue
+            _, _, done, _, info = env.step(action)
+
+            print(f'action taken{action}')
+            await asyncio.sleep(3)  # Control the rate of processing actions
+
+            if done:
+                exit_flag[0] = True
+                break
+        await asyncio.sleep(1)  # Control the rate of processing actions    
+        
+
+async def main(env):
+    """Main function to run tasks concurrently."""
+    await asyncio.gather(
+        render_environment(env),
+        check_determinator(env),
+        process_actions(env)
+    )
+
+asyncio.run(main(env))
