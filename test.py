@@ -24,6 +24,11 @@ from pokemon import Pokemon
 # TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
 # in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
 # but first i need to figure out various text boxes. 
+# TODO create method makeDecision(info) which returns a decision
+# this should be a move but in future we'll incorperate a switch and an item. 
+# TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
+# in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
+# but first i need to figure out various text boxes. 
 
 game='PokemonSilver-GbColor'
 data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json"
