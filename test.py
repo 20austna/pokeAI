@@ -28,6 +28,7 @@ from functools import partial
 # TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
 # in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
 # but first i need to figure out various text boxes. 
+# TODO create a method called create pokemon data
 
 
 # Logging function for game info
@@ -125,7 +126,7 @@ async def render_environment(env, shared_state):
             shared_state["exit_flag"] = True
 
         await asyncio.sleep(1/60)  # Adjust as necessary
-        
+
 async def check_determinator(env, shared_state):
     """Task to check info['determinator'] and make AI decisions."""
     while not shared_state["exit_flag"]:
