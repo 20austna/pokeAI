@@ -5,9 +5,10 @@ import struct
 import sys
 import logging
 import time
-from processText import process_move_menu_variables, process_text_box_variables, Decode, print_encoding_values
+from processText import process_move_menu_variables, Decode, print_encoding_values
 from pynput import keyboard
 from pokemon import Pokemon
+from decision_ai import make_decision
 
 # TODO create and test a variable in the data.json track the number of moves each pokemon in our party has 
 # TODO create and test a varible in the data.json to track the number of pokemon in our party
@@ -97,8 +98,9 @@ logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(messa
 listener = keyboard.Listener(on_press=on_press, on_release=on_release)
 listener.start()
 
+"""
 done = False
-i = 0
+i = 10
 # ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
 # main loop
 while not done and not exit_flag[0]:
@@ -109,10 +111,64 @@ while not done and not exit_flag[0]:
     for key in keys_pressed:
         # see on_press(key) and key_to_action for all possible inputs
         action[key_to_action[key]] = 1 #set corresponding action to active
-
+    
     # Perform the action in the environment
     obs, _, done, _, info = env.step(action)
+    
+    if info["determinator"] == 121 and i >= 10: 
+        #print(make_decision())
+        print(f"Made decision{i}")
+        action[8] = 1
+        obs, _, done, _, info = env.step(action)
+        obs, _, done, _, info = env.step(action)
+        i = 1
+    else:
+        print("STOP IT NO MORE AI THINGS")
+        i = i + 1
     
 listener.stop()
 env.close()
 print("Game loop exited.")
+"""
+
+import asyncio
+
+done = False
+i = 10
+decision_cooldown = 0  # Cooldown counter for decisions
+
+async def main_loop():
+    global done, i, decision_cooldown
+
+    while not done and not exit_flag[0]: 
+        env.render()
+        print(info)
+
+        # Update the action array based on keys pressed
+        action = [0] * 9  # Reset actions
+        for key in keys_pressed:
+            action[key_to_action[key]] = 1  # Set corresponding action to active
+
+        # Perform the action in the environment
+        obs, _, done, _, info = env.step(action)
+
+        if info["determinator"] == 121: 
+            # Make a decision
+            print(f"Made decision{i}")
+            action[8] = 1
+            obs, _, done, _, info = env.step(action)
+            obs, _, done, _, info = env.step(action)
+            i = 1
+            #decision_cooldown = 20  # Set cooldown steps
+            await asyncio.sleep(1)  # Add a brief pause before continuing
+        else:
+            if decision_cooldown > 0:
+                decision_cooldown -= 1  # Decrease cooldown on each loop
+            print("STOP IT NO MORE AI THINGS")
+            i += 1
+
+        # Small delay to prevent spinning the loop too fast
+        await asyncio.sleep(0.1)
+
+# Run the asyncio event loop
+asyncio.run(main_loop())

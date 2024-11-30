@@ -339,225 +339,85 @@
     "move_menu_move_4_text1": {
       "address": 39424,
       "type": ">u1"
-  },
-  "move_menu_move_4_text2": {
-      "address": 39425,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text3": {
-      "address": 39426,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text4": {
-      "address": 39427,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text5": {
-      "address": 39428,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text6": {
-      "address": 39429,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text7": {
-      "address": 39430,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text8": {
-      "address": 39431,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text9": {
-      "address": 39432,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text10": {
-      "address": 39433,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text11": {
-      "address": 39434,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text12": {
-      "address": 39435,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text13": {
-      "address": 39436,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text14": {
-      "address": 39437,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text15": {
-      "address": 39438,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text16": {
-      "address": 39439,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text17": {
-      "address": 39440,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text18": {
-      "address": 39441,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text19": {
-      "address": 39442,
-      "type": ">u1"
-  },
-  "move_menu_move_4_text20": {
-      "address": 39443,
-      "type": ">u1"
-  }, 
-    "textBox_1": {
-      "address": 39361, 
-      "type": ">u1"
-    } ,
-    "textBox_2": {
-      "address": 39362,
-      "type": ">u1"
     },
-    "textBox_3": {
-      "address": 39363,
-      "type": ">u1"
+    "move_menu_move_4_text2": {
+        "address": 39425,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text3": {
+        "address": 39426,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text4": {
+        "address": 39427,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text5": {
+        "address": 39428,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text6": {
+        "address": 39429,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text7": {
+        "address": 39430,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text8": {
+        "address": 39431,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text9": {
+        "address": 39432,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text10": {
+        "address": 39433,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text11": {
+        "address": 39434,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text12": {
+        "address": 39435,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text13": {
+        "address": 39436,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text14": {
+        "address": 39437,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text15": {
+        "address": 39438,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text16": {
+        "address": 39439,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text17": {
+        "address": 39440,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text18": {
+        "address": 39441,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text19": {
+        "address": 39442,
+        "type": ">u1"
+    },
+    "move_menu_move_4_text20": {
+        "address": 39443,
+        "type": ">u1"
     }, 
-    "textBox_4": {
-      "address": 39364,
-      "type": ">u1"
-    },
-    "textBox_5": {
-      "address": 39365,
-      "type": ">u1"
-    },
-    "textBox_6": {
-      "address": 39366,
-      "type": ">u1"
-    },
-    "textBox_7": {
-      "address": 39367,
-      "type": ">u1"
-    },
-    "textBox_8": {
-      "address": 39368,
-      "type": ">u1"
-    },
-    "textBox_9": {
-      "address": 39369,
-      "type": ">u1"
-    },
-    "textBox_10": {
-      "address": 39370,
-      "type": ">u1"
-    },
-    "textBox_11": {
-      "address": 39371,
-      "type": ">u1"
-    },
-    "textBox_12": {
-      "address": 39372,
-      "type": ">u1"
-    },
-    "textBox_13": {
-      "address": 39373,
-      "type": ">u1"
-    },
-    "textBox_14": {
-      "address": 39374,
-      "type": ">u1"
-    },
-    "textBox_15": {
-      "address": 39375,
-      "type": ">u1"
-    },
-    "textBox_16": {
-      "address": 39376,
-      "type": ">u1"
-    },
-    "textBox_17": {
-      "address": 39377,
-      "type": ">u1"
-    },
-    "textBox_18": {
-      "address": 39378,
-      "type": ">u1"
-    },
-    "textBox_19": {
-      "address": 39379,
-      "type": ">u1"
-    },
-    "textBox_20": {
-      "address": 39380,
-      "type": ">u1"
-    },
-    "textBox_21": {
-      "address": 39381,
-      "type": ">u1"
-    },
-    "textBox_22": {
-      "address": 39382,
-      "type": ">u1"
-    },
-    "textBox_23": {
-      "address": 39383,
-      "type": ">u1"
-    },
-    "textBox_24": {
-      "address": 39384,
-      "type": ">u1"
-    },
-    "textBox_25": {
-      "address": 39385,
-      "type": ">u1"
-    },
-    "textBox_26": {
-      "address": 39386,
-      "type": ">u1"
-    },
-    "textBox_27": {
-      "address": 39387,
-      "type": ">u1"
-    },
-    "textBox_28": {
-      "address": 39388,
-      "type": ">u1"
-    },
-    "textBox_29": {
-      "address": 39389,
-      "type": ">u1"
-    },
-    "textBox_30": {
-      "address": 39390,
-      "type": ">u1"
-    },
-    "textBox_31": {
-      "address": 39391,
-      "type": ">u1"
-    },
-    "textBox_32": {
-      "address": 39392,
-      "type": ">u1"
-    },
-    "textBox_33": {
-      "address": 39393,
-      "type": ">u1"
-    },
-    "textBox_34": {
-      "address": 39394,
-      "type": ">u1"
-    },
-    "textBox_35": {
-      "address": 39395,
-      "type": ">u1"
-    },
-    "textBox_36": {
-      "address": 39396,
+    "determinator": {
+      "address" : 39304,
       "type": ">u1"
     }
   }

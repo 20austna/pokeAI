@@ -55,39 +55,33 @@ def process_move_menu_variables(info):
     #decoded_text = Decode(move_menu)  # Decode the concatenated list of values
     #return decoded_text  # Return the decoded string
 
-
-
-def process_text_box_variables(info):
-    # List to hold tuples of (textBox name, decoded value)
-    text_boxes = []
-
-    # Extract only the keys that correspond to textBox_X (numeric X)
-    text_box_keys = [key for key in info.keys() if re.match(r'textBox_\d+', key)]
-
-    # Sort the keys based on the numeric part (after 'textBox_')
-    sorted_keys = sorted(text_box_keys, key=lambda x: int(x.split('_')[1]))
-
-    # Extract textBox variables and their values from the sorted keys
-    for key in sorted_keys:
-        text_boxes.append((key, info[key]))  # Store the variable name and its value
-
-    # Decode each textBox value and return the results as a list of decoded strings
-    decoded_strings = []
-    for _, text_box_value in text_boxes:
-        decoded_text = Decode([text_box_value])  # Decode each text box value
-        decoded_strings.append(decoded_text)
-
-    return decoded_strings  # Return a list of decoded textBox strings
-
 def Decode(decimal_values):
     # Get the encoding chart
     chart = create_encoding_chart()
+
+    # Control characters and their descriptions
+    control_character_descriptions = {
+        76: "Autoscroll: Scrolls the standard text window up one line without player confirmation.",
+        78: "Double-spaced line break: Moves print position two tiles below the current line.",
+        79: "Second line: Moves print position to the start of the second line.",
+        80: "String terminator: Ends the string. Often pads shorter strings.",
+        81: "Paragraph: Clears text window after confirmation, then starts printing in a new window.",
+    }
     
     # Initialize an empty string to store the decoded characters
     decoded_string = ""
     
     # Process each decimal value in the array
     for dec_value in decimal_values:
+
+        if dec_value in control_character_descriptions:
+            # Add a descriptive placeholder for the control character
+            decoded_string += f"[{control_character_descriptions[dec_value]}]"
+            # Trigger potential actions based on specific control characters
+            if dec_value in {76, 81}:  # Examples where AI might be called
+                trigger_ai_call(dec_value)
+            continue
+
         # Convert the decimal value to a hexadecimal string
         hex_value = f"{dec_value:X}"
         
@@ -128,6 +122,11 @@ def create_encoding_chart():
     ]
     return chart
 
+def trigger_ai_call(control_char):
+    """Placeholder function to trigger AI interaction based on control characters."""
+    # Add custom logic to call the AI decision-making module here
+    print(f"AI triggered by control character: {control_char}")
+
 # useful for determining what to do with text box information
 # print a list of all in game characters and their correponding Hex & Decmal values
 def print_encoding_values():
@@ -139,3 +138,5 @@ def print_encoding_values():
                 dec_value = int(hex_value, 16)
                 if dec_value != 0:  # Ignore 0x00
                     print(f"Character: '{value}' | Hex: 0x{hex_value} | Decimal: {dec_value}")
+
+print_encoding_values()
