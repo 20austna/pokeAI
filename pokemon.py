@@ -56,7 +56,91 @@ def find_poke_name(pokemon_id):
     Given a pokemon ID, return the corresponding Pokemon name from the pokemon_dict.
     """
     return pokemon_dict.get(pokemon_id, "Unknown Pokémon")
+class Pokemon:
+    def __init__(self, id, types, hp, attack, defense, special_attack, special_defense, speed, description=""):
+        """
+        Initialize a new Pokemon object.
 
+        :param id: ID of the Pokémon (int)
+        :param types: List of types (e.g., ['Fire'], ['Water', 'Flying']) (list of str)
+        :param hp: Hit Points (int)
+        :param attack: Attack stat (int)
+        :param defense: Defense stat (int)
+        :param special_attack: Special Attack stat (int)
+        :param special_defense: Special Defense stat (int)
+        :param speed: Speed stat (int)
+        :param description: A brief description of the Pokémon (str)
+        """
+        self._data = {
+            "id": id,
+            "name": find_pokemon_name(id),
+            "types": types,
+            "hp": hp,
+            "attack": attack,
+            "defense": defense,
+            "special_attack": special_attack,
+            "special_defense": special_defense,
+            "speed": speed,
+            "description": description,
+        }
+
+    def __getitem__(self, key):
+        """
+        Get an item by key.
+        """
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        """
+        Set an item by key.
+        """
+        self._data[key] = value
+
+    def __delitem__(self, key):
+        """
+        Delete an item by key.
+        """
+        del self._data[key]
+
+    def __iter__(self):
+        """
+        Return an iterator over the keys.
+        """
+        return iter(self._data)
+
+    def __len__(self):
+        """
+        Return the number of items.
+        """
+        return len(self._data)
+
+    def __str__(self):
+        """
+        String representation of the Pokemon object.
+        """
+        return f"Pokemon({self._data})"
+
+    def keys(self):
+        """
+        Return the keys of the dictionary.
+        """
+        return self._data.keys()
+
+    def values(self):
+        """
+        Return the values of the dictionary.
+        """
+        return self._data.values()
+
+    def items(self):
+        """
+        Return the items of the dictionary.
+        """
+        return self._data.items()
+
+
+
+'''
 class Pokemon:
     def __init__(self, pokemon_id, move_1, move_2, move_3, move_4, type_1, level, current_HP, max_HP, defense, attack, ability, speed, special_Defense, special_Attack, type_2=None):
         self.name = find_poke_name(pokemon_id)
@@ -94,5 +178,6 @@ vhagar = Pokemon(
     special_Defense = 100,
     special_Attack = 150
 )
+'''
         
 

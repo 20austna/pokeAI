@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 """def make_decision(our_pokemon, opponent_pokemon, menu_state):
+=======
+
+def make_decision(our_pokemon, opponent_pokemon, menu_state):
+    """
+    This will serve as an AI decision-making function in order to decide what the best move 
+    would be during in a Pokemon battle.
+>>>>>>> 6fcc3c691606d16f13750682841c6bc17edbf271
     
     
     #This will serve as an AI decision-making function in order to decide what the best move 
@@ -179,28 +187,31 @@ if not openai.api_key:
 
 # Define Pokémon data (Gen 2 specific)
 # This dictionary contains the data of Pokémon with their stats, types, and available moves.
-pokemon_data = {
-    "Typhlosion": {
-        "level": 100,  # Pokémon's level
-        "type": ["Fire"],  # Pokémon's type(s)
-        "moves": {  # Moves available for the Pokémon
-            "Flamethrower": {"type": "Fire", "power": 95},  # Move details (type and base power)
-            "Swift": {"type": "Normal", "power": 60},
-            "Thunder Punch": {"type": "Electric", "power": 75},
-            "Earthquake": {"type": "Ground", "power": 100},
-        },
-    },
-    "Ampharos": {
-        "level": 100,
-        "type": ["Electric"],
-        "moves": {
-            "Thunderbolt": {"type": "Electric", "power": 95},
-            "Fire Punch": {"type": "Fire", "power": 75},
-            "Focus Blast": {"type": "Fighting", "power": 120},
-            "reflect": {"type": "Psychic", "power": 0},  # Non-damaging move (power = 0)
-        },
+# Pokémon data for the player and opponent
+your_pokemon = {
+    "name": "Typhlosion",
+    "level": 100,
+    "type": ["Fire"],
+    "moves": {
+        "Flamethrower": {"type": "Fire", "power": 95, "pp": 5},
+        "Swift": {"type": "Normal", "power": 60, "pp": 10},
+        "Thunder Punch": {"type": "Electric", "power": 75, "pp": 0},  # Out of PP
+        "Earthquake": {"type": "Ground", "power": 100, "pp": 3},
     },
 }
+
+opponent_pokemon = {
+    "name": "Ampharos",
+    "level": 100,
+    "type": ["Electric"],
+    "moves": {
+        "Thunderbolt": {"type": "Electric", "power": 95, "pp": 8},
+        "Fire Punch": {"type": "Fire", "power": 75, "pp": 5},
+        "Focus Blast": {"type": "Fighting", "power": 120, "pp": 2},
+        "Reflect": {"type": "Psychic", "power": 0, "pp": 10},  # Non-damaging move
+    },    
+}
+
 
 # Gen 2 type chart
 # Defines the effectiveness of Pokémon moves against specific types.
@@ -224,13 +235,10 @@ type_chart = {
     "Steel": {"strong_against": ["Ice", "Rock"], "weak_against": ["Fire", "Water", "Electric", "Steel"], "immune_to": ["Poison"]},
 }
 
-# Pokémon data and type chart remain unchanged as defined in your code.
-
 # Function to calculate move damage based on Gen 2 type chart, move power, and STAB.
 def calculate_damage(attacker, defender, move):
-    # Get the move details from the attacker's move set
     move_data = attacker["moves"].get(move)
-    if not move_data:
+    if not move_data or move_data["pp"] <= 0:  # Check if move is out of PP
         return 0
 
     move_type = move_data["type"]
@@ -252,18 +260,20 @@ def calculate_damage(attacker, defender, move):
     # Calculate total damage
     return move_data["power"] * effectiveness * stab
 
-
 # Function to choose the best move for an attacker against a defender.
 def choose_move(attacker_name, defender_name):
-    attacker = pokemon_data[attacker_name]
-    defender = pokemon_data[defender_name]
 
-    move_damages = {}  # To store move damage calculations
+    move_damages = {}
     best_move = None
     max_damage = 0
 
-    for move in attacker["moves"]:
-        damage = calculate_damage(attacker, defender, move)
+    print("Moves type:", (your_pokemon["moves"])) 
+
+    for move in your_pokemon["moves"]:
+        # Skip moves with no PP
+        if your_pokemon["moves"][move]["pp"] <= 0:
+            continue
+        damage = calculate_damage(your_pokemon, opponent_pokemon, move)
         move_damages[move] = damage
         if damage > max_damage:
             max_damage = damage
@@ -271,8 +281,8 @@ def choose_move(attacker_name, defender_name):
 
     return {
         "action": "choose_move",
-        "attacker": attacker_name,
-        "defender": defender_name,
+        "attacker": your_pokemon["name"],
+        "defender": opponent_pokemon["name"],
         "move_damages": move_damages,
         "chosen_move": best_move,
         "estimated_damage": max_damage,
@@ -284,9 +294,22 @@ FUNCTIONS = {
     "choose_move": choose_move,
 }
 
-# Define a function descriptor for OpenAI's function-calling feature
-functions = [
+# OpenAI API client setup (unchanged)
+client = OpenAI(api_key=os.environ["PokemonAPI"])
+
+# Initial messages and OpenAI call
+messages = [
+    {"role": "system", "content": "You are a Pokémon battle assistant, specialized in Gen 2 battles."},
     {
+        "role": "user",
+        "content": f"My {your_pokemon['name']} is battling {opponent_pokemon['name']}. List all of {your_pokemon['name']}'s moves with the calculated damage for each move. Then, recommend the most optimal move."
+    },
+]
+
+response = client.chat.completions.create(
+    model="gpt-4o",  # Use appropriate model here
+    messages=messages,
+    functions=[{
         "name": "choose_move",
         "description": "Choose the best move for the attacker Pokémon.",
         "parameters": {
@@ -295,30 +318,19 @@ functions = [
                 "attacker_name": {"type": "string", "description": "The name of the attacking Pokémon."},
                 "defender_name": {"type": "string", "description": "The name of the defending Pokémon."},
             },
-            "required": ["attacker_name", "defender_name"],  # Required parameters for this function
+            "required": ["attacker_name", "defender_name"],
         },
-    }
-]
-
-# OpenAI API client change to your API key name
-client = OpenAI(api_key=os.environ["PokemonAPI"])
-
-# Initial messages and OpenAI call
-messages = [
-    {"role": "system", "content": "You are a Pokémon battle assistant, specialized in Gen 2 battles."},
-    {"role": "user", "content": "My Typhlosion is battling Ampharos. List all of Typhlosion's moves with the calculated damage for each move. Then, recommend the most optimal move."},
-]
-
-response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=messages,
-    functions=functions,
+    }],
     function_call="auto",
 )
 
-# Convert the response to a dictionary
-# response_dict = response.to_dict()
+#print("Response from OpenAI:", response.choices[0].message)
+# If the response includes a function call, process it
+if hasattr(response.choices[0].message, "function_call"):
+    function_name = response.choices[0].message.function_call.name
+    function_args = json.loads(response.choices[0].message.function_call.arguments)
 
+<<<<<<< HEAD
 # Now you can print the response as a nicely formatted JSON
 # print(json.dumps(response_dict, indent=2))
 #print(response.choices[0].message)
@@ -352,3 +364,23 @@ def make_decision():
         return response.choices[0].message.content or "AI response has no content."
 
 print(make_decision())
+=======
+    print(function_args)
+    function_response = FUNCTIONS[function_name](**function_args)
+
+    # Update messages with function response
+    messages.append({"role": "assistant", "content": response.choices[0].message.content or "AI called a function without returning content."})
+    messages.append({
+        "role": "function",
+        "name": function_name,
+        "content": json.dumps(function_response),
+    })
+
+    final_response = client.chat.completions.create(
+        model="gpt-4",  # Choose appropriate model
+        messages=messages,
+    )
+    print(final_response.choices[0].message.content)
+else:
+    print(response.choices[0].message.content or "AI response has no content.")
+>>>>>>> 6fcc3c691606d16f13750682841c6bc17edbf271
