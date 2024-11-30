@@ -5,10 +5,13 @@ import struct
 import sys
 import logging
 import time
+import asyncio
+import queue
 from processText import process_move_menu_variables, Decode, print_encoding_values
 from pynput import keyboard
 from pokemon import Pokemon
 from decision_ai import make_decision
+from functools import partial
 
 # TODO create and test a variable in the data.json track the number of moves each pokemon in our party has 
 # TODO create and test a varible in the data.json to track the number of pokemon in our party
@@ -25,11 +28,23 @@ from decision_ai import make_decision
 # TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
 # in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
 # but first i need to figure out various text boxes. 
-# TODO create method makeDecision(info) which returns a decision
-# this should be a move but in future we'll incorperate a switch and an item. 
-# TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
-# in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
-# but first i need to figure out various text boxes. 
+# TODO create a method called create pokemon data
+
+
+# Logging function for game info
+def log_game_info(shared_state):
+    info = shared_state.get("info", {})
+    logging.info(f"Captured info: {info}")
+    print(f"Captured info: {info}")
+
+def menu_text_info(shared_state):
+        info = shared_state.get("info", {})
+        decoded_menu_text = process_move_menu_variables(info)
+        # Print the decoded menu text
+        print(f"\n{decoded_menu_text}")
+
+# Set up logging for game info
+logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(message)s')
 
 game='PokemonSilver-GbColor'
 data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json"
@@ -52,23 +67,18 @@ key_to_action = {
     'x': 8       # A
 }
 
-# State to track pressed keys
-keys_pressed = set()
-exit_flag = [False]  # Use a mutable object to allow modification inside handlers
-
-
 # Key press event handler
-def on_press(key):
+def on_press(key, shared_state):
     try:
         key_str = key.char if hasattr(key, 'char') else key.name
         if key_str in key_to_action: 
-            keys_pressed.add(key_str) 
+            shared_state["keys_pressed"].add(key_str) 
         elif key_str == 'esc': # Leave loop when 'esc' is pressed
-            exit_flag[0] = True
+            shared_state["exit_flag"] = True
         elif key_str == 'i':  # Log information when 'i' is pressed
-            log_game_info()
+            log_game_info(shared_state)
         elif key_str == 'm':  # Print menu information when 'm' is pressed
-            menu_text_info() 
+            menu_text_info(shared_state) 
     except AttributeError:
         pass
 
@@ -76,99 +86,96 @@ def on_press(key):
 def on_release(key):
     try:
         key_str = key.char if hasattr(key, 'char') else key.name
-        if key_str in key_to_action and key_str in keys_pressed:
-            keys_pressed.remove(key_str)
+        if key_str in key_to_action and key_str in shared_state["keys_pressed"]:
+            shared_state["keys_pressed"].remove(key_str)
     except AttributeError:
-        pass
-
-# Logging function for game info
-def log_game_info():
-    logging.info(f"Captured info: {info}")
-    print(f"Captured info: {info}")
-
-def menu_text_info():
-        decoded_menu_text = process_move_menu_variables(info)
-        # Print the decoded menu text
-        print(f"\n{decoded_menu_text}")
-
-# Set up logging for game info
-logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(message)s')
-
-# Start listening for keyboard inputs
-listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-listener.start()
-
-"""
-done = False
-i = 10
-# ['B', None, 'SELECT', 'START', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'A']
-# main loop
-while not done and not exit_flag[0]:
-    env.render()
-
-    #update the action array based on keys pressed
-    action = [0] * 9 # Reset actions
-    for key in keys_pressed:
-        # see on_press(key) and key_to_action for all possible inputs
-        action[key_to_action[key]] = 1 #set corresponding action to active
-    
-    # Perform the action in the environment
-    obs, _, done, _, info = env.step(action)
-    
-    if info["determinator"] == 121 and i >= 10: 
-        #print(make_decision())
-        print(f"Made decision{i}")
-        action[8] = 1
-        obs, _, done, _, info = env.step(action)
-        obs, _, done, _, info = env.step(action)
-        i = 1
-    else:
-        print("STOP IT NO MORE AI THINGS")
-        i = i + 1
-    
-listener.stop()
-env.close()
-print("Game loop exited.")
-"""
+        pass    
 
 import asyncio
+from collections import deque
 
-done = False
-i = 10
-decision_cooldown = 0  # Cooldown counter for decisions
+action_queue = deque()
+action_taken = False  # State variable to track if an action has been taken
 
-async def main_loop():
-    global done, i, decision_cooldown
+# Define shared state
+shared_state = {
+    'info': None,
+    'exit_flag': False,
+    'keys_pressed': set(),
+}
 
-    while not done and not exit_flag[0]: 
-        env.render()
-        print(info)
+# Start listening for keyboard inputs
+listener = keyboard.Listener(on_press=partial(on_press, shared_state=shared_state), on_release=on_release)
+listener.start()
 
-        # Update the action array based on keys pressed
-        action = [0] * 9  # Reset actions
-        for key in keys_pressed:
-            action[key_to_action[key]] = 1  # Set corresponding action to active
+async def render_environment(env, shared_state):
+    """Task to render the environment and handle inputs."""
+    while not shared_state["exit_flag"]:
+        #env.render()
 
+        # Update action array based on keys pressed
+        action = [0] * 9
+        for key in shared_state["keys_pressed"]:
+            action[key_to_action[key]] = 1
+        
         # Perform the action in the environment
-        obs, _, done, _, info = env.step(action)
+        _, _, done, _, shared_state["info"] = env.step(action)
 
-        if info["determinator"] == 121: 
-            # Make a decision
-            print(f"Made decision{i}")
-            action[8] = 1
-            obs, _, done, _, info = env.step(action)
-            obs, _, done, _, info = env.step(action)
-            i = 1
-            #decision_cooldown = 20  # Set cooldown steps
-            await asyncio.sleep(1)  # Add a brief pause before continuing
-        else:
-            if decision_cooldown > 0:
-                decision_cooldown -= 1  # Decrease cooldown on each loop
-            print("STOP IT NO MORE AI THINGS")
-            i += 1
+        # Stop if done
+        if done:
+            shared_state["exit_flag"] = True
 
-        # Small delay to prevent spinning the loop too fast
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1/60)  # Adjust as necessary
 
-# Run the asyncio event loop
-asyncio.run(main_loop())
+async def check_determinator(env, shared_state):
+    """Task to check info['determinator'] and make AI decisions."""
+    while not shared_state["exit_flag"]:
+        _, _, _, _, shared_state["info"] = env.step([0] * 9)  # Fetch latest info without doing any action
+        
+        info = shared_state["info"]
+        if info and info.get("determinator") == 121 and not action_taken:
+            print(f"Making decision based on determinator")
+            action = [0] * 9
+            action[8] = 1  # Example action: press 'A'
+            action_queue.append(action)  # Queue the action
+            action_queue.append(action)  # Queue the action
+            action_taken = True  # Set action taken to True
+
+            # Allow some time for the game to process the action
+            await asyncio.sleep(3)  # Adjust this delay based on how long you need
+            
+        elif info.get("determinator") != 121:
+            action_taken = False  # Reset action_taken when determinator changes
+
+        await asyncio.sleep(0.1)  # Control how often to check
+    print("end determinator")
+
+async def process_actions(env, shared_state):
+    """Task to process actions from the queue."""
+    print(shared_state["exit_flag"])
+    while not shared_state["exit_flag"]:
+        while action_queue:  # Process all available actions
+            #env.render()
+            action = action_queue.popleft()  # Get the next action from the queue
+            _, _, done, _, shared_state["info"] = env.step(action)
+
+            print(f'action taken{action}')
+            await asyncio.sleep(3)  # Control the rate of processing actions
+        
+            if done:
+                shared_state["exit_flag"] = True
+                break
+        #print("complete action queue")
+        await asyncio.sleep(1)  # Control the rate of processing actions    
+    print("end process")
+        
+
+async def main(env):
+    """Main function to run tasks concurrently."""
+    await asyncio.gather(
+        render_environment(env,shared_state),
+        #check_determinator(env,shared_state),
+        process_actions(env, shared_state)
+    )
+
+asyncio.run(main(env))

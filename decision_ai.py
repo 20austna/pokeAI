@@ -156,6 +156,7 @@ import os
 import json
 import openai
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # Load environment variables from .env file (optional)
 # if you don't have your api key in a .env file. create a file 
@@ -174,11 +175,6 @@ load_dotenv()
 openai.api_key = os.getenv("PokemonAPI")
 if not openai.api_key:
     raise ValueError("Missing OpenAI API key. Set OPENAI_API in your environment or .env file.")
-
-
-import os
-import json
-from openai import OpenAI
 
 # Define Pokémon data (Gen 2 specific)
 # This dictionary contains the data of Pokémon with their stats, types, and available moves.
