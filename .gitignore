@@ -24,3 +24,7 @@ __pycache__/
 info_log.txt
 
 .env
+
+venv
+
+myenv
