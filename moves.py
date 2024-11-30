@@ -57,7 +57,7 @@ def find_move_name(move_id):
     return move_dict.get(move_id, "Unknown Move")
 
 class Move:
-    def __init__(self, id, move_type, power, accuracy, move_pp, attack_type, description=""):
+    def __init__(self, id, move_type, power, accuracy, current_move_pp ,max_move_pp, attack_type, description=""):
         """
         Initialize a new Move object.
 
@@ -75,7 +75,8 @@ class Move:
             "move_type": move_type,
             "power": power,
             "accuracy": accuracy,
-            "move_pp": move_pp,
+            "max_move_pp": max_move_pp,
+            "current_move_pp": current_move_pp,
             "attack_type": attack_type,
             "description": description,
         }
@@ -140,7 +141,8 @@ flamethrower = Move(
     move_type="Fire",
     power=90,
     accuracy=100,
-    move_pp=15,
+    max_move_pp=15,
+    current_move_pp=15, #in game value
     attack_type="Special",
     description="A powerful fire attack that may inflict a burn."
 )

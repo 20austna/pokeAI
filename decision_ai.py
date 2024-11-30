@@ -1,16 +1,17 @@
-def make_decision(our_pokemon, opponent_pokemon, menu_state):
-    """
-    This will serve as an AI decision-making function in order to decide what the best move 
-    would be during in a Pokemon battle.
+"""def make_decision(our_pokemon, opponent_pokemon, menu_state):
     
-    Args:
-        our_pokemon: our own pokemon object.
-        opponent_pokemon: opponent's pokemon object.
-        menu_state (str): current menu state (ex: "Fight").
     
-    Returns:
-        str: the best move to use.
-    """
+    #This will serve as an AI decision-making function in order to decide what the best move 
+    #would be during in a Pokemon battle.
+    
+    #Args:
+    #    our_pokemon: our own pokemon object.
+    #    opponent_pokemon: opponent's pokemon object.
+    #    menu_state (str): current menu state (ex: "Fight").
+    
+    #Returns:
+    #    str: the best move to use.
+    
     
     # we want to make sure we are in fight mode. if we aren't, then
     # no decision will be made
@@ -55,6 +56,7 @@ def make_decision(our_pokemon, opponent_pokemon, menu_state):
     
     print(f"AI selected move: {best_move}")
     return best_move
+    """
 
 
 type_chart = {
@@ -319,7 +321,7 @@ response = client.chat.completions.create(
 
 # Now you can print the response as a nicely formatted JSON
 # print(json.dumps(response_dict, indent=2))
-# print(response.choices[0].message)
+#print(response.choices[0].message)
 def make_decision():
     if hasattr(response.choices[0].message, "function_call") and response.choices[0].message.function_call is not None:
         function_name = response.choices[0].message.function_call.name
@@ -344,7 +346,9 @@ def make_decision():
             model="gpt-4o-mini",
             messages=messages,
         )
+        print(final_response)
         return final_response.choices[0].message.content
     else:
         return response.choices[0].message.content or "AI response has no content."
 
+print(make_decision())
