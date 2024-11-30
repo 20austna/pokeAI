@@ -1,12 +1,4 @@
-<<<<<<< HEAD
 """def make_decision(our_pokemon, opponent_pokemon, menu_state):
-=======
-
-def make_decision(our_pokemon, opponent_pokemon, menu_state):
-    """
-    This will serve as an AI decision-making function in order to decide what the best move 
-    would be during in a Pokemon battle.
->>>>>>> 6fcc3c691606d16f13750682841c6bc17edbf271
     
     
     #This will serve as an AI decision-making function in order to decide what the best move 
