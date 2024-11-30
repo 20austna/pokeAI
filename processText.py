@@ -138,3 +138,4 @@ def print_encoding_values():
                 dec_value = int(hex_value, 16)
                 if dec_value != 0:  # Ignore 0x00
                     print(f"Character: '{value}' | Hex: 0x{hex_value} | Decimal: {dec_value}")
+#print_encoding_values()
