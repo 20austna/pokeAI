@@ -156,7 +156,7 @@ Pokemon_1 = Pokemon(
     description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
 )
 
-print(Pokemon_1)
+#print(Pokemon_1)
 #my_moves = Pokemon_1._data.get("moves")
 #print(my_moves.get('move_1').__getitem__('id'))
         

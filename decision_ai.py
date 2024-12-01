@@ -1,64 +1,3 @@
-"""def make_decision(our_pokemon, opponent_pokemon, menu_state):
-    
-    
-    #This will serve as an AI decision-making function in order to decide what the best move 
-    #would be during in a Pokemon battle.
-    
-    #Args:
-    #    our_pokemon: our own pokemon object.
-    #    opponent_pokemon: opponent's pokemon object.
-    #    menu_state (str): current menu state (ex: "Fight").
-    
-    #Returns:
-    #    str: the best move to use.
-    
-    
-    # we want to make sure we are in fight mode. if we aren't, then
-    # no decision will be made
-    if menu_state != "Fight":
-        print("Not in the Fight menu so no decision made.")
-        return None
-    
-    # simple debug statements
-    print(f"Opponent HP: {opponent_pokemon.current_HP}/{opponent_pokemon.max_HP}")
-    print(f"Opponent Level: {opponent_pokemon.level}")
-    
-    # filter out any moves that have 0 pp
-    available_moves = [move for move in our_pokemon.moves if move["move_pp"] > 0]
-    # if ALL our moves have no pp left than use struggle
-    if not available_moves:
-        print("No available moves left! Struggle must be used.")
-        return "Struggle"
-    
-    # determine what the best move is based on effectiveness and power
-    best_move = None
-    # this variable will serve to track what the most effective move is
-    best_score = -1 
-    
-    for move in available_moves:
-        # get move stats
-        move_name = move["name"]
-        move_type = move["move_type"]
-        move_power = move["power"]
-        move_pp = move["move_pp"]
-        
-        # calculate the type effectiveness 
-        # (if we do not know what the type is then use a default value of 1.0)
-        effectiveness = type_effectiveness(move_type, opponent_pokemon.type1)
-        if opponent_pokemon.type2:
-            effectiveness = max(effectiveness, type_effectiveness(move_type, opponent_pokemon.type2))
-        
-        # calculate a score based on power and effectiveness which is the damage multiplier
-        score = move_power * effectiveness
-        if score > best_score:
-            best_score = score
-            best_move = move_name
-    
-    print(f"AI selected move: {best_move}")
-    return best_move
-    """
-
-
 type_chart = {
     # fire type
     ("Fire", "Grass"): 2.0, ("Fire", "Bug"): 2.0, ("Fire", "Ice"): 2.0, ("Fire", "Steel"): 2.0,
@@ -158,6 +97,7 @@ import json
 import openai
 from dotenv import load_dotenv
 from openai import OpenAI
+from pokemon import Pokemon
 
 # Load environment variables from .env file (optional)
 # if you don't have your api key in a .env file. create a file 
@@ -180,6 +120,38 @@ if not openai.api_key:
 # Define Pokémon data (Gen 2 specific)
 # This dictionary contains the data of Pokémon with their stats, types, and available moves.
 # Pokémon data for the player and opponent
+
+#example of 3 moves the pokemon will have
+move_4 = {
+    "id": 53,
+    "move_pp_current": 15,
+}
+
+move_5 = {
+    "id": 2,
+    "move_pp_current": 35,  # Maximum PP for Pound
+}
+
+move_6 = {
+    "id": 3,
+    "move_pp_current": 25,  # Maximum PP for Karate Chop
+}
+
+
+#1: 'Pound', 2: 'Karate Chop'
+Pokemon_1 = Pokemon(
+    id=246,
+    types=["Rock", "Ground"],
+    moves = [move_4, move_5, move_6],
+    hp=50,
+    attack=64,
+    defense=50,
+    special_attack=45,
+    special_defense=50,
+    speed=41,
+    description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
+)
+
 your_pokemon = {
     "name": "Typhlosion",
     "level": 100,
@@ -316,16 +288,8 @@ response = client.chat.completions.create(
     function_call="auto",
 )
 
-#print("Response from OpenAI:", response.choices[0].message)
-# If the response includes a function call, process it
-if hasattr(response.choices[0].message, "function_call"):
-    function_name = response.choices[0].message.function_call.name
-    function_args = json.loads(response.choices[0].message.function_call.arguments)
-
-# Now you can print the response as a nicely formatted JSON
-# print(json.dumps(response_dict, indent=2))
-#print(response.choices[0].message)
 def make_decision():
+    # If the response includes a function call, process it
     if hasattr(response.choices[0].message, "function_call") and response.choices[0].message.function_call is not None:
         function_name = response.choices[0].message.function_call.name
         function_args = json.loads(response.choices[0].message.function_call.arguments)
@@ -349,9 +313,9 @@ def make_decision():
             model="gpt-4o-mini",
             messages=messages,
         )
-        print(final_response)
+        #print(final_response)
         return final_response.choices[0].message.content
     else:
         return response.choices[0].message.content or "AI response has no content."
 
-print(make_decision())
+#print(make_decision())
