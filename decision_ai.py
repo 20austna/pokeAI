@@ -296,18 +296,13 @@ def make_decision():
 
         function_response = FUNCTIONS[function_name](**function_args)
 
+        # Update messages with function response
         messages.append({"role": "assistant", "content": response.choices[0].message.content or "AI called a function without returning content."})
-        messages.append(
-            {
-                "role": "function",
-                "name": function_name,
-                "content": json.dumps(function_response),
-            }
-        )
-        #debugging
-        for i, msg in enumerate(messages):
-            if not isinstance(msg["content"], str):
-                print(f"Invalid content in message[{i}]:", msg)
+        messages.append({
+            "role": "function",
+            "name": function_name,
+            "content": json.dumps(function_response),
+        })
 
         final_response = client.chat.completions.create(
             model="gpt-4o-mini",
