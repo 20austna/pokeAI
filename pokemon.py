@@ -36,7 +36,7 @@ def create_moves(moves):
 
 
 class Pokemon:
-    def __init__(self, id, moves, hp, attack, defense, special_attack, special_defense, speed,types=None, name="", current_mon=False, description=""):
+    def __init__(self, id, moves=None, hp=None, attack=None, defense=None, special_attack=None, special_defense=None, speed=None,types=None, name="", current_mon=False, description=""):
         """
         Initialize a new Pokemon object.
 

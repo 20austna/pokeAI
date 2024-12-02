@@ -153,8 +153,7 @@ def generate_prompt(attacker, defender):
 
     prompt += """
     Based on the provided information, determine which move will be the most effective considering type advantages, move power, accuracy, and current PP left.
-    Return only the name of the most optimal move and briefly explain the reasoning.
-    """
+    Return only the name of the most optimal move."""
 
     return prompt
 
@@ -193,4 +192,4 @@ def make_decision(attacker, defender):
 #best_move_decision = make_decision(Pokemon_1, Pokemon_2)
 
 # Print the result
-print(f"The AI's decision: {make_decision(Pokemon_1, Pokemon_2)}")
+print(f"Select {make_decision(Pokemon_1, Pokemon_2)}")
