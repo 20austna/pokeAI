@@ -419,6 +419,10 @@
     "determinator": {
       "address" : 39304,
       "type": ">u1"
+    }, 
+    "move_determinator": {
+        "address": 39306, 
+        "type": ">u1"
     }
   }
 }
