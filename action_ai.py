@@ -116,7 +116,7 @@ def get_action_queue(action_description, menu_state):
             # If valid, return the reasoning and function call
             #print("Reasoning:", reasoning)
             #print("Function Call:", function_call)
-            print(response)
+            #print(response)
             process_action(function_call)
             ret_q = action_queue
             action_queue = []
