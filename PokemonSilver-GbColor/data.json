@@ -84,6 +84,22 @@
       "address": 51985,
       "type": ">u1"
     },
+    "Current_Move_1_PP": {
+        "address": 51988,
+        "type": ">u1"
+    },
+    "Current_Move_2_PP": {
+        "address": 51989,
+        "type": ">u1"
+    },
+    "Current_Move_3_PP": {
+        "address": 51990,
+        "type": ">u1"
+    },
+    "Current_Move_4_PP": {
+        "address": 51991,
+        "type": ">u1"
+    },    
     "Battle_Type": {
       "address": 53526,
       "type": ">u1"
@@ -422,6 +438,14 @@
     }, 
     "move_determinator": {
         "address": 39306, 
+        "type": ">u1"
+    },
+    "Their_Current_Mon": {
+        "address": 53485,
+        "type": ">u1"
+    }, 
+    "Their_Current_Mon_HP": {
+        "address": 53504, 
         "type": ">u1"
     }
   }

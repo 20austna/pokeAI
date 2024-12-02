@@ -29,6 +29,8 @@ def create_moves(moves):
     moves_dict = {}
     for move in moves:
         key = f"move_{i}"
+        if move.get("id") == 0:
+            continue
         value = Move(move.get("id"), move.get("current_move_pp"))
         moves_dict[key] = value
         i=i+1
@@ -52,6 +54,9 @@ class Pokemon:
         """
 
         api_data = get_poke_data(id)
+        created_moves = None
+        if moves: 
+            created_moves = create_moves(moves)
 
         if "error" in api_data:
             raise ValueError(f"Failed to fetch data for move with ID {id}: {api_data['error']}")
@@ -60,7 +65,7 @@ class Pokemon:
             "id": id,
             "name": name or api_data["name"],
             "types": types or api_data["types"],
-            "moves": create_moves(moves),
+            "moves": created_moves,
             "hp": hp,
             "attack": attack,
             "defense": defense,
@@ -127,7 +132,7 @@ class Pokemon:
     
 #example of 3 moves the pokemon will have
 move_4 = {
-    "id": 53,
+    "id": 0,
     "move_pp_current": 15,
 }
 
@@ -156,8 +161,8 @@ Pokemon_1 = Pokemon(
     description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
 )
 
-# print(Pokemon_1)
-# my_moves = Pokemon_1._data.get("moves")
-# print(my_moves.get('move_1').__getitem__('id'))
+#print(Pokemon_1)
+#my_moves = Pokemon_1._data.get("moves")
+#print(my_moves)
         
 

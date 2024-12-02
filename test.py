@@ -130,32 +130,114 @@ async def render_environment(env, shared_state):
 
         await asyncio.sleep(1/60)  # Adjust as necessary
 
+def create_pokemon(info): 
+    #assume that everything is less than 255 so we dont have to worry about Mon_1_*stat*_1
+    move_1 = {
+        "id":info.get("Current_Move_1"),
+        "current_move_pp":info.get("Current_Move_1_PP")
+    }
+    move_2 = {
+        "id":info.get("Current_Move_2"),
+        "current_move_pp":info.get("Current_Move_2_PP")
+    }
+    move_3 = {
+        "id":info.get("Current_Move_3"),
+        "current_move_pp":info.get("Current_Move_3_PP")
+    }
+    move_4 = {
+        "id":info.get("Current_Move_4"),
+        "current_move_pp":info.get("Current_Move_4_PP")
+    }
+    our_current_mon = Pokemon(
+        id=info.get("Current_Mon"),
+        moves = [move_1, move_2, move_3, move_4],
+        hp=info.get("Mon_1_HP_2"),
+        attack=info.get("Mon_1_Attack_2"),
+        defense=info.get("Mon_1_Defense_2"),
+        special_attack=info.get("Mon_1_Sp_Attack_2"),
+        special_defense=info.get("Mon_1_Sp_Defense_2"),
+        speed=info.get("Mon_1_Speed_2")
+    )
+
+    their_current_mon = Pokemon(
+        id=info.get("Their_Current_Mon"),
+        hp=info.get("Mon_1_HP_2")
+    )
+    """move_4 = {
+        "id": 53,
+        "current_move_pp": 2,
+    }
+
+    move_5 = {
+        "id": 91,
+        "current_move_pp": 10,  # Maximum PP for Pound
+    }
+
+    move_6 = {
+        "id": 3,
+        "current_move_pp": 25,  # Maximum PP for double slap
+    }
+
+    move_7 = {
+        "id": 157,
+        "current_move_pp": 10,  # Maximum PP for double slap
+    }
+    Pokemon_1 = Pokemon(
+    id=246,
+    #types=["Rock", "Ground"],
+    moves = [move_4, move_5, move_6, move_7],
+    hp=50,
+    attack=64,
+    defense=50,
+    special_attack=45,
+    special_defense=50,
+    speed=41,
+    description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
+    )
+
+    Pokemon_2 = Pokemon(
+        id=6,
+        #types=["Fire"],
+        moves = [move_4],
+        hp=50,
+        attack=64,
+        defense=50,
+        special_attack=45,
+        special_defense=50,
+        speed=41,
+        description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
+    )"""
+    return our_current_mon, their_current_mon
+
+
 async def check_determinator(env, shared_state):
     """Task to check info['determinator'] and make AI decisions."""
     action_taken = shared_state["action_taken"]
     move_taken = shared_state["move_taken"]
+    decision_string = None
     while not shared_state["exit_flag"]:
         await asyncio.sleep(0.5)
         _, _, _, _, shared_state["info"] = env.step([0] * 9)  # Fetch latest info without doing any action
         # current pokemon(id), their pokemon(id), 
-        # make_decision(Pokemon_1, Pokemon_2)
+        # decision_string = make_decision(Pokemon_1, Pokemon_2)
+        
         # create decision string 
         # whenever bottom right corner has a down arrow press a
         action_taken = shared_state["action_taken"]
         move_taken = shared_state["move_taken"]
         info = shared_state["info"]
+        #print(create_pokemon(info)[0])
         #print(menu_str)
         if info and info.get("determinator") == 121 and not action_taken and not move_taken:
             menu_str = process_move_menu_variables(info)
             print(f"Making decision based on determinator. \n Menu state:\n{menu_str}")
+            pokemon=create_pokemon(info)
+            decision_string = make_decision(pokemon[0], pokemon[1])
+            print(decision_string)
             action = [0] * 9
-            #action[8] = 1  # Example action: press 'A'
-            #action_queue.append(action)  # Queue the action
-            #action_queue.append(action)  # Queue the action
-            #action_taken = True  # Set action taken to True
             shared_state["action_taken"] = True
             # def get_action_queue(action_description, menu_state):
-            action_arr = get_action_queue("Choose the move scratch", menu_str)
+            action_arr = get_action_queue(decision_string, menu_str)
             for actions in action_arr:
                 action[actions] = 1
                 action_queue.append(action)
@@ -166,11 +248,14 @@ async def check_determinator(env, shared_state):
         elif info and info.get("move_determinator") == 126 and info.get("determinator") != 121 and not move_taken:
             menu_str = process_move_menu_variables(info)
             print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
-
+            if not decision_string: 
+                pokemon=create_pokemon(info)
+                decision_string = make_decision(pokemon[0], pokemon[1])
+            print(decision_string)
             action = [0] * 9
             shared_state["move_taken"] = True
             # def get_action_queue(action_description, menu_state):
-            action_arr = get_action_queue("Choose the move scratch", menu_str)
+            action_arr = get_action_queue(decision_string, menu_str)
             for actions in action_arr:
                 action[actions] = 1
                 action_queue.append(action)
