@@ -76,7 +76,7 @@ def get_action_queue(action_description, menu_state):
         temperature=0,  # Use a lower temperature for deterministic output
     )"""
 
-
+    #try strict = true
     for attempt in range(3):
         # Call OpenAI API
         response = openai.chat.completions.create(
@@ -116,7 +116,7 @@ def get_action_queue(action_description, menu_state):
             # If valid, return the reasoning and function call
             #print("Reasoning:", reasoning)
             #print("Function Call:", function_call)
-            #print(response)
+            print(response)
             process_action(function_call)
             ret_q = action_queue
             action_queue = []
@@ -140,7 +140,7 @@ def process_action(function_call):
             add_to_q(nums)
 
 # Example usage
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     # Simulate the decision to attack
     action_description = "use the move scratch"  # Placeholder action
     #menu_state = "║   ║SCRATCH      ║\n║   ║▶LEER         ║\n║   ║RAGE         ║\n║   ║-            ║"  # Current menu state
@@ -148,4 +148,4 @@ if __name__ == "__main__":
     menu_state = "║       ║          ║\n ║       ║▶FIGHT PKMN ║\n║       ║          ║\n║       ║ PACK  RUN║"
 
     
-    print("Current action queue:", get_action_queue(action_description, menu_state))
+    print("Current action queue:", get_action_queue(action_description, menu_state))"""

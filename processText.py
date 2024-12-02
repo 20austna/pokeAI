@@ -58,29 +58,12 @@ def process_move_menu_variables(info):
 def Decode(decimal_values):
     # Get the encoding chart
     chart = create_encoding_chart()
-
-    # Control characters and their descriptions
-    control_character_descriptions = {
-        76: "Autoscroll: Scrolls the standard text window up one line without player confirmation.",
-        78: "Double-spaced line break: Moves print position two tiles below the current line.",
-        79: "Second line: Moves print position to the start of the second line.",
-        80: "String terminator: Ends the string. Often pads shorter strings.",
-        81: "Paragraph: Clears text window after confirmation, then starts printing in a new window.",
-    }
     
     # Initialize an empty string to store the decoded characters
     decoded_string = ""
     
     # Process each decimal value in the array
     for dec_value in decimal_values:
-
-        if dec_value in control_character_descriptions:
-            # Add a descriptive placeholder for the control character
-            decoded_string += f"[{control_character_descriptions[dec_value]}]"
-            # Trigger potential actions based on specific control characters
-            if dec_value in {76, 81}:  # Examples where AI might be called
-                trigger_ai_call(dec_value)
-            continue
 
         # Convert the decimal value to a hexadecimal string
         hex_value = f"{dec_value:X}"
