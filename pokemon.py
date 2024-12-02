@@ -36,7 +36,7 @@ def create_moves(moves):
 
 
 class Pokemon:
-    def __init__(self, id, types, moves, hp, attack, defense, special_attack, special_defense, speed, name="", current_mon=False, description=""):
+    def __init__(self, id, moves, hp, attack, defense, special_attack, special_defense, speed, name="", current_mon=False, description="",types=None):
         """
         Initialize a new Pokemon object.
 
@@ -156,8 +156,8 @@ Pokemon_1 = Pokemon(
     description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
 )
 
-#print(Pokemon_1)
-#my_moves = Pokemon_1._data.get("moves")
-#print(my_moves.get('move_1').__getitem__('id'))
+# print(Pokemon_1)
+# my_moves = Pokemon_1._data.get("moves")
+# print(my_moves.get('move_1').__getitem__('id'))
         
 
