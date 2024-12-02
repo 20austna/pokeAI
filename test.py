@@ -7,6 +7,7 @@ import logging
 import time
 import asyncio
 import queue
+from action_ai import get_action_queue
 from processText import process_move_menu_variables, Decode, print_encoding_values
 from pynput import keyboard
 from pokemon import Pokemon
@@ -134,25 +135,41 @@ async def check_determinator(env, shared_state):
         
         info = shared_state["info"]
         if info and info.get("determinator") == 121 and not action_taken:
+            await asyncio.sleep(0.5)
             print(f"Making decision based on determinator")
             action = [0] * 9
-            action[8] = 1  # Example action: press 'A'
-            action_queue.append(action)  # Queue the action
-            action_queue.append(action)  # Queue the action
+            #action[8] = 1  # Example action: press 'A'
+            #action_queue.append(action)  # Queue the action
+            #action_queue.append(action)  # Queue the action
             action_taken = True  # Set action taken to True
-
+            # def get_action_queue(action_description, menu_state):
+            action_arr = get_action_queue("Choose the move scratch", menu_text_info(shared_state["info"]))
+            for actions in action_arr:
+                action[actions] = 1
+                action_queue.append(action)
+                action = [0] * 9 
             # Allow some time for the game to process the action
             await asyncio.sleep(3)  # Adjust this delay based on how long you need
             
         elif info.get("determinator") != 121:
+            # need second determinator, go find the top left corner of the box and  see if its a NE right corner or ES
+            action = [0] * 9
+            action_arr = get_action_queue("Choose the move scratch", menu_text_info(shared_state["info"]))
+            for actions in action_arr:
+                action[actions] = 1
+                action_queue.append(action)
+                action = [0] * 9 
+            
+            await asyncio.sleep(3)  # Adjust this delay based on how long you need
             action_taken = False  # Reset action_taken when determinator changes
+
 
         await asyncio.sleep(0.1)  # Control how often to check
     print("end determinator")
 
 async def process_actions(env, shared_state):
     """Task to process actions from the queue."""
-    print(shared_state["exit_flag"])
+    #print(shared_state["exit_flag"])
     while not shared_state["exit_flag"]:
         while action_queue:  # Process all available actions
             #env.render()
@@ -174,7 +191,7 @@ async def main(env):
     """Main function to run tasks concurrently."""
     await asyncio.gather(
         render_environment(env,shared_state),
-        #check_determinator(env,shared_state),
+        check_determinator(env,shared_state),
         process_actions(env, shared_state)
     )
 
