@@ -14,23 +14,8 @@ from pokemon import Pokemon
 from decision_ai import make_decision
 from functools import partial
 
-# TODO create and test a variable in the data.json track the number of moves each pokemon in our party has 
-# TODO create and test a varible in the data.json to track the number of pokemon in our party
+# To find more RAM address to add to the data.json follow the link below. 
 # https://datacrystal.tcrf.net/wiki/Pok%C3%A9mon_Gold_and_Silver/RAM_map
-# TODO create party class(consists of numPokemon Pokemon)
-# TODO create pokemon class(consists of a pokemon with numMoves moves and all the pokemon's stats)
-# TODO further investigate using bulbapedia API
-# TODO further investigate using pokeAPI
-# https://bulbapedia.bulbagarden.net/wiki/Special:ApiSandbox
-# https://www.mediawiki.org/wiki/API:Main_page
-# TODO create hardcoded type chart
-# TODO create method makeDecision(info) which returns a decision
-# this should be a move but in future we'll incorperate a switch and an item. 
-# TODO create method completeDecision(decision, info) which returns a list of action arrays to accomplish the task
-# in the future the second parameter will only contain text box info. That way it can tell where the cursor is pointed. 
-# but first i need to figure out various text boxes. 
-# TODO create a method called create pokemon data
-
 
 # Logging function for game info
 def log_game_info(shared_state):
@@ -96,7 +81,6 @@ import asyncio
 from collections import deque
 
 action_queue = deque()
-action_taken = False  # State variable to track if an action has been taken
 
 # Define shared state
 shared_state = {
@@ -114,8 +98,6 @@ listener.start()
 async def render_environment(env, shared_state):
     """Task to render the environment and handle inputs."""
     while not shared_state["exit_flag"]:
-        #env.render()
-
         # Update action array based on keys pressed
         action = [0] * 9
         for key in shared_state["keys_pressed"]:
@@ -128,10 +110,11 @@ async def render_environment(env, shared_state):
         if done:
             shared_state["exit_flag"] = True
 
-        await asyncio.sleep(1/60)  # Adjust as necessary
+        await asyncio.sleep(1/60)  
+
 
 def create_pokemon(info): 
-    #assume that everything is less than 255 so we dont have to worry about Mon_1_*stat*_1
+    """Create a pokemon object from memory values inside of data.json"""
     move_1 = {
         "id":info.get("Current_Move_1"),
         "current_move_pp":info.get("Current_Move_1_PP")
@@ -169,41 +152,42 @@ def create_pokemon(info):
 
 async def check_determinator(env, shared_state):
     """Task to check info['determinator'] and make AI decisions."""
-    action_taken = shared_state["action_taken"]
-    move_taken = shared_state["move_taken"]
-    decision_string = None
+    action_taken = shared_state["action_taken"] # shared state to keep track of if an action has been taken in the main menu
+    move_taken = shared_state["move_taken"] # shared state to keep track of if an action has been taken in the move menu
+    decision_string = None # needs to be outside the loop to maintain its continuity between actions
     while not shared_state["exit_flag"]:
-        await asyncio.sleep(1.3)
+        await asyncio.sleep(1.3) # need this delay to let the menus load
         _, _, _, _, shared_state["info"] = env.step([0] * 9)  # Fetch latest info without doing any action
         
-        # whenever bottom right corner has a down arrow press a
         action_taken = shared_state["action_taken"]
         move_taken = shared_state["move_taken"]
-        info = shared_state["info"]
+        info = shared_state["info"] 
+
+        # if we see that a specific character in a specific place on screen we know we're in the main menu
         if info and info.get("determinator") == 121 and not action_taken and not move_taken:
-            menu_str = process_move_menu_variables(info)
-            print(f"Making decision based on determinator. \n Menu state:\n{menu_str}")
+            menu_str = process_move_menu_variables(info) # Get the menu string
+            print(f"Making decision based on menu determinator. \n Menu state:\n{menu_str}")
             pokemon=create_pokemon(info)
             decision_string = make_decision(pokemon[0], pokemon[1])
             print(decision_string)
-            action = [0] * 9
+            action = [0] * 9 # create an action array with none of the controller inputs set to true
             shared_state["action_taken"] = True
-            # def get_action_queue(action_description, menu_state):
-            action_arr = get_action_queue(decision_string, menu_str)
+            action_arr = get_action_queue(decision_string, menu_str) # function returns an array
+
             for actions in action_arr:
-                action[actions] = 1
-                action_queue.append(action)
+                # each number in the action_arr corresponds to a single button on the controller we want to press 
+                action[actions] = 1 
+                action_queue.append(action) # appends it to a queue that is proccessed inside of process_actions(env, shared_state)
                 action = [0] * 9 
-            # Allow some time for the game to process the action
-            await asyncio.sleep(3)  # Adjust this delay based on how long you need
-            
+        
+            await asyncio.sleep(3) # Allow some time for the game to process the action
+        
+        # if we see that a specific character in a specific(different) place on screen we know we're in the move menu
         elif info and info.get("move_determinator") == 126 and info.get("determinator") != 121 and not move_taken:
             menu_str = process_move_menu_variables(info)
             print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
             if not decision_string: 
-                print("this should only run if we started in the move menu")
                 pokemon=create_pokemon(info)
-                #print(pokemon[0])
                 decision_string = make_decision(pokemon[0], pokemon[1])
             print(decision_string)
             action = [0] * 9
@@ -215,7 +199,6 @@ async def check_determinator(env, shared_state):
                 action_queue.append(action)
                 action = [0] * 9 
 
-            #print("Finished adding ")
             # Allow some time for the game to process the action
             await asyncio.sleep(3)  # Adjust this delay based on how long you need
 
