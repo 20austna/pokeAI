@@ -1,13 +1,5 @@
-import openai
 import os
-from pokemon import Pokemon
-from dotenv import load_dotenv
 from openai import OpenAI
-
-load_dotenv()
-
-# Set OpenAI API key and change to your API key name
-#openai.api_key = os.getenv("PokemonAPI")
 
 """
  The type chart defines the relationships between Pokémon types for damage calculation.
@@ -111,7 +103,7 @@ def generate_prompt(attacker, defender):
 
     prompt += """
     Based on the provided information, determine which move will be the most effective considering damage(which is provided to you and takes into consideration type effectiveness), move power, move's description, accuracy, and current PP left.
-    Return the name of the most optimal move and your reasoning for choosing it over others, defend your choice."""
+    Return the name of the most optimal."""
 
     # Return fully constructed prompt
     return prompt
@@ -137,7 +129,7 @@ def make_decision(attacker, defender):
     response = client.chat.completions.create(
         model="gpt-4",
         messages=messages,
-        #max_tokens=50,
+        max_tokens=50,
         temperature=0.5,
     )
 
