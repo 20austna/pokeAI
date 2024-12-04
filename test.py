@@ -50,7 +50,7 @@ logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(messa
 game='PokemonSilver-GbColor'
 data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json"
 scenario_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/scenario.json"
-env = retro.make(game, 'Battle.state') #in the Battle.state file we have 1 pokemon, Totodile, which is our current pokemon. 
+env = retro.make(game, 'rivalBattle.state') #in the Battle.state file we have 1 pokemon, Totodile, which is our current pokemon. 
 env.reset()
 
 # Define the action array
@@ -163,50 +163,7 @@ def create_pokemon(info):
         id=info.get("Their_Current_Mon"),
         hp=info.get("Mon_1_HP_2")
     )
-    """move_4 = {
-        "id": 53,
-        "current_move_pp": 2,
-    }
-
-    move_5 = {
-        "id": 91,
-        "current_move_pp": 10,  # Maximum PP for Pound
-    }
-
-    move_6 = {
-        "id": 3,
-        "current_move_pp": 25,  # Maximum PP for double slap
-    }
-
-    move_7 = {
-        "id": 157,
-        "current_move_pp": 10,  # Maximum PP for double slap
-    }
-    Pokemon_1 = Pokemon(
-    id=246,
-    #types=["Rock", "Ground"],
-    moves = [move_4, move_5, move_6, move_7],
-    hp=50,
-    attack=64,
-    defense=50,
-    special_attack=45,
-    special_defense=50,
-    speed=41,
-    description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
-    )
-
-    Pokemon_2 = Pokemon(
-        id=6,
-        #types=["Fire"],
-        moves = [move_4],
-        hp=50,
-        attack=64,
-        defense=50,
-        special_attack=45,
-        special_defense=50,
-        speed=41,
-        description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
-    )"""
+    
     return our_current_mon, their_current_mon
 
 
@@ -216,18 +173,13 @@ async def check_determinator(env, shared_state):
     move_taken = shared_state["move_taken"]
     decision_string = None
     while not shared_state["exit_flag"]:
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1.3)
         _, _, _, _, shared_state["info"] = env.step([0] * 9)  # Fetch latest info without doing any action
-        # current pokemon(id), their pokemon(id), 
-        # decision_string = make_decision(Pokemon_1, Pokemon_2)
         
-        # create decision string 
         # whenever bottom right corner has a down arrow press a
         action_taken = shared_state["action_taken"]
         move_taken = shared_state["move_taken"]
         info = shared_state["info"]
-        #print(create_pokemon(info)[0])
-        #print(menu_str)
         if info and info.get("determinator") == 121 and not action_taken and not move_taken:
             menu_str = process_move_menu_variables(info)
             print(f"Making decision based on determinator. \n Menu state:\n{menu_str}")
@@ -249,7 +201,9 @@ async def check_determinator(env, shared_state):
             menu_str = process_move_menu_variables(info)
             print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
             if not decision_string: 
+                print("this should only run if we started in the move menu")
                 pokemon=create_pokemon(info)
+                #print(pokemon[0])
                 decision_string = make_decision(pokemon[0], pokemon[1])
             print(decision_string)
             action = [0] * 9

@@ -11,7 +11,7 @@ openai.api_key = os.getenv("PokemonAPI")
 
 # Example Pokémon objects
 move_4 = {
-    "id": 53,
+    "id": 12,
     "current_move_pp": 2,
 }
 
@@ -26,7 +26,7 @@ move_6 = {
 }
 
 move_7 = {
-    "id": 157,
+    "id": 43,
     "current_move_pp": 10,  # Maximum PP for double slap
 }
 
@@ -134,17 +134,21 @@ def generate_prompt(attacker, defender):
     """
 
     move_damages = {}
+    print(pokemon_moves)
     # Add the attacker's moves to the prompt
     for move_key, move_data in pokemon_moves.items():   
         # Check type effectiveness for each move against the defender
         
-        damage = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data)
+        if move_data.__getitem__("attack_type") == "status" or move_data.__getitem__("power") == None:
+            damage = 0
+        else:
+            damage = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data)
         #print(damage)
         
         move_damages[move_data['name']] = damage
 
         #if damage != 0: 
-        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Power: {move_data['power']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {damage})\n"
+        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Power: {move_data['power']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {damage}), Description: {move_data['description']}"
         #elif damage == 0:
             #continue
     
@@ -152,8 +156,8 @@ def generate_prompt(attacker, defender):
     prompt += f"\nDefender: {defender['name']}\nType: {', '.join(defender['types'])}\n\n"
 
     prompt += """
-    Based on the provided information, determine which move will be the most effective considering type advantages, move power, accuracy, and current PP left.
-    Return only the name of the most optimal move."""
+    Based on the provided information, determine which move will be the most effective considering type advantages, move power, move's description, accuracy, and current PP left.
+    Return the name of the most optimal move and your reasoning for choosing it over others, defend your choice."""
 
     return prompt
 
@@ -192,4 +196,4 @@ def make_decision(attacker, defender):
 #best_move_decision = make_decision(Pokemon_1, Pokemon_2)
 
 # Print the result
-#print(f"Select {make_decision(Pokemon_1, Pokemon_2)}")
+print(f"Select {make_decision(Pokemon_1, Pokemon_2)}")
