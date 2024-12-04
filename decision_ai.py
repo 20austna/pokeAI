@@ -63,6 +63,7 @@ def calculate_damage(attacker, defender, move):
          # If the move's type has no effect on the defender's type, set damage to 0.
         elif defender_type in type_chart[move_type]["immune_to"]:
             damage_multiplier.append(0)
+
             
 
     # Check for Same Type Attack Bonus (STAB)
@@ -90,7 +91,7 @@ def generate_prompt(attacker, defender):
     # Initialize the prompt with instructions and details about the attacker.
     prompt = f"""
     You are a Pokémon battle assistant. Given the information below, choose the best move for {attacker['name']} to use against {defender['name']}.
-    Consider the type effectiveness, move power, current PP, total move power, and accuracy to determine the best move.
+    consider current PP, total move power, and accuracy to determine the best move. Do not consider type effectiveness as it has been calculated for you in total move power.
 
     Attacker: {attacker['name']}
     Type(s): {attacker['types']}
@@ -109,8 +110,8 @@ def generate_prompt(attacker, defender):
     prompt += f"\nDefender: {defender['name']}\nType: {', '.join(defender['types'])}\n\n"
 
     prompt += """
-    Based on the provided information, determine which move will be the most effective considering type advantages, move power, accuracy, and current PP left.
-    Return only the name of the most optimal move."""
+    Based on the provided information, determine which move will be the most effective considering damage(which is provided to you and takes into consideration type effectiveness), move power, move's description, accuracy, and current PP left.
+    Return the name of the most optimal move and your reasoning for choosing it over others, defend your choice."""
 
     # Return fully constructed prompt
     return prompt
@@ -136,7 +137,7 @@ def make_decision(attacker, defender):
     response = client.chat.completions.create(
         model="gpt-4",
         messages=messages,
-        max_tokens=50,
+        #max_tokens=50,
         temperature=0.5,
     )
 
