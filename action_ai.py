@@ -114,9 +114,6 @@ def get_action_queue(action_description, menu_state):
         # Check if reasoning and function call are present
         if reasoning and function_call:
             # If valid, return the reasoning and function call
-            #print("Reasoning:", reasoning)
-            #print("Function Call:", function_call)
-            #print(response)
             process_action(function_call)
             ret_q = action_queue
             action_queue = []
@@ -124,15 +121,11 @@ def get_action_queue(action_description, menu_state):
 
         # Debugging info on retries
         print(f"Attempt {attempt + 1} failed: Incomplete response. Retrying...")
-    # Print the raw response for debugging
-    #print("Raw response from API:", response)
 
     raise ValueError("Model failed to provide both reasoning and function call after 3 attempts")
 
 def process_action(function_call):
-    #function_call = response.choices[0].message.function_call
     # Process the function call response
-    #print(f'adding {function_call}')
     if function_call and function_call.name == "add_to_q":
         arguments = json.loads(function_call.arguments)
         nums = arguments.get("nums")  # Extract the number

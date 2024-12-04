@@ -1,12 +1,8 @@
 import retro
 import retro.data  
-import json
-import struct
-import sys
 import logging
-import time
 import asyncio
-import queue
+from collections import deque
 from action_ai import get_action_queue
 from processText import process_move_menu_variables, Decode, print_encoding_values
 from pynput import keyboard
@@ -26,16 +22,16 @@ def log_game_info(shared_state):
 def menu_text_info(shared_state):
         info = shared_state.get("info", {})
         decoded_menu_text = process_move_menu_variables(info)
-        # Print the decoded menu text
         print(f"\n{decoded_menu_text}")
 
 # Set up logging for game info
 logging.basicConfig(filename='info_log.txt', level=logging.INFO, format='%(message)s')
 
 game='PokemonSilver-GbColor'
-data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json"
+# Make sure to change 
+data_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/data.json" 
 scenario_path = "/home/borg/vretro/lib/python3.12/site-packages/retro/data/stable/PokemonSilver-GbColor/scenario.json"
-env = retro.make(game, 'rivalBattle.state') #in the Battle.state file we have 1 pokemon, Totodile, which is our current pokemon. 
+env = retro.make(game, 'rivalBattle.state')
 env.reset()
 
 # Define the action array
@@ -76,9 +72,6 @@ def on_release(key):
             shared_state["keys_pressed"].remove(key_str)
     except AttributeError:
         pass    
-
-import asyncio
-from collections import deque
 
 action_queue = deque()
 
@@ -152,67 +145,66 @@ def create_pokemon(info):
 
 async def check_determinator(env, shared_state):
     """Task to check info['determinator'] and make AI decisions."""
-    action_taken = shared_state["action_taken"] # shared state to keep track of if an action has been taken in the main menu
-    move_taken = shared_state["move_taken"] # shared state to keep track of if an action has been taken in the move menu
-    decision_string = None # needs to be outside the loop to maintain its continuity between actions
+    # Shared states to keep track of if an action has been taken in the main menu or the move menu
+    action_taken = shared_state["action_taken"] 
+    move_taken = shared_state["move_taken"] 
+    decision_string = None
+
     while not shared_state["exit_flag"]:
-        await asyncio.sleep(1.3) # need this delay to let the menus load
+        await asyncio.sleep(1.3) # Let menus load
         _, _, _, _, shared_state["info"] = env.step([0] * 9)  # Fetch latest info without doing any action
         
         action_taken = shared_state["action_taken"]
         move_taken = shared_state["move_taken"]
         info = shared_state["info"] 
 
-        # if we see that a specific character in a specific place on screen we know we're in the main menu
+        # If we see that a specific character in a specific place on screen we know we're in the main menu
         if info and info.get("determinator") == 121 and not action_taken and not move_taken:
-            menu_str = process_move_menu_variables(info) # Get the menu string
+            menu_str = process_move_menu_variables(info) # Get the text on screen
             print(f"Making decision based on menu determinator. \n Menu state:\n{menu_str}")
             pokemon=create_pokemon(info)
             decision_string = make_decision(pokemon[0], pokemon[1])
             print(decision_string)
-            action = [0] * 9 # create an action array with none of the controller inputs set to true
+            action = [0] * 9 # Create an action array with none of the controller inputs set to true
             shared_state["action_taken"] = True
-            action_arr = get_action_queue(decision_string, menu_str) # function returns an array
+            action_arr = get_action_queue(decision_string, menu_str) # Function returns an array
 
             for actions in action_arr:
-                # each number in the action_arr corresponds to a single button on the controller we want to press 
-                action[actions] = 1 
-                action_queue.append(action) # appends it to a queue that is proccessed inside of process_actions(env, shared_state)
+                action[actions] = 1 # Each number in the action_arr corresponds to a single button on the controller we want to press 
+                action_queue.append(action) # Appends it to a queue that is proccessed inside of process_actions(env, shared_state)
                 action = [0] * 9 
         
             await asyncio.sleep(3) # Allow some time for the game to process the action
         
-        # if we see that a specific character in a specific(different) place on screen we know we're in the move menu
+        # If we see a specific character in a specific place on screen we know we're in the move menu
         elif info and info.get("move_determinator") == 126 and info.get("determinator") != 121 and not move_taken:
+            # This code is all essentially the same as the block above except for the "if"
             menu_str = process_move_menu_variables(info)
-            print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
-            if not decision_string: 
+            print(f"Making taking action based on move determinator. \n Menu state\n{menu_str}")
+            if not decision_string: # Make sure we aren't asking the decision AI to pick a move if we're already picked one
+                print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
                 pokemon=create_pokemon(info)
                 decision_string = make_decision(pokemon[0], pokemon[1])
-            print(decision_string)
             action = [0] * 9
             shared_state["move_taken"] = True
-            # def get_action_queue(action_description, menu_state):
             action_arr = get_action_queue(decision_string, menu_str)
-            for actions in action_arr:
+            for actions in action_arr: 
                 action[actions] = 1
                 action_queue.append(action)
                 action = [0] * 9 
 
             # Allow some time for the game to process the action
-            await asyncio.sleep(3)  # Adjust this delay based on how long you need
+            await asyncio.sleep(3) 
 
         await asyncio.sleep(0.1)  # Control how often to check
     print("end determinator")
 
 async def process_actions(env, shared_state):
     """Task to process actions from the queue."""
-    #print(shared_state["exit_flag"])
     while not shared_state["exit_flag"]:
         action_taken = shared_state["action_taken"]
         move_taken = shared_state["move_taken"]
         while action_queue:  # Process all available actions
-            #env.render()
             action = action_queue.popleft()  # Get the next action from the queue
             _, _, done, _, shared_state["info"] = env.step(action)
 
@@ -222,7 +214,6 @@ async def process_actions(env, shared_state):
             if done:
                 shared_state["exit_flag"] = True
                 break
-        #print("complete action queue")
         if action_taken:
             shared_state["action_taken"] = False
             print("resetting action taken")
@@ -231,7 +222,6 @@ async def process_actions(env, shared_state):
             print("resetting move taken")
 
         await asyncio.sleep(1)  # Control the rate of processing actions    
-    print("end process")
         
 
 async def main(env):

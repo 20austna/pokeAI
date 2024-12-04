@@ -1,4 +1,6 @@
 import re
+# This function was originally only intended to deal with the move menu 
+# But as it turns out we were able to get any text from the screen using this method
 def process_move_menu_variables(info):
     """
     Process the move_menu variables from the `info` dictionary. 
@@ -11,8 +13,6 @@ def process_move_menu_variables(info):
     """
     # List to hold the concatenated values for each move
     moves = []
-    # List to hold tuples of (variable name, decoded value)
-    #move_menu = []
 
     # Extract keys related to move_menu variables
     move_menu_keys = [key for key in info.keys() if re.match(r'move_menu_move_\d+_text\d+', key)]
@@ -20,7 +20,7 @@ def process_move_menu_variables(info):
     # Sort the keys by move number and text index
     def move_menu_sort_key(key):
         parts = key.split('_')
-        move_num = int(parts[3])  # Extract move number (e.g., "move_menu_move_1") #move
+        move_num = int(parts[3])  # Extract move number (e.g., "move_menu_move_1") 
         text_index = int(re.search(r'\d+', parts[4]).group())  # Extract numeric part of "textX"
         return (move_num, text_index)
 
@@ -30,6 +30,7 @@ def process_move_menu_variables(info):
     current_move = []
     current_move_num = None
 
+    # Loop for decoding text in order of appearance
     for key in sorted_keys:
         move_num = int(key.split('_')[3])  # Extract move number from the key
         if current_move_num is None or move_num == current_move_num:
@@ -47,15 +48,9 @@ def process_move_menu_variables(info):
     # Join moves with line breaks
     return "\n".join(moves)
 
-    # Extract move_menu variables and their values in sorted order
-    #for key in sorted_keys:
-    #    move_menu.append(info[key])  # Append the value of the variable
-
-    # Decode all values in order
-    #decoded_text = Decode(move_menu)  # Decode the concatenated list of values
-    #return decoded_text  # Return the decoded string
 
 def Decode(decimal_values):
+    """The text on screen is stored as decimal values in memory, so we need to decode these values"""
     # Get the encoding chart
     chart = create_encoding_chart()
     
@@ -83,8 +78,9 @@ def Decode(decimal_values):
 
     return decoded_string
 
+
 def create_encoding_chart():
-    #https://bulbapedia.bulbagarden.net/wiki/Character_encoding_(Generation_II)
+    # https://bulbapedia.bulbagarden.net/wiki/Character_encoding_(Generation_II)
     chart = [
         ["?", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"],
         ["Q", "R", "S", "T", "", "X", "Y", "Z", "(", ")", ":", ";", "[", "", "", ""],
@@ -105,12 +101,7 @@ def create_encoding_chart():
     ]
     return chart
 
-def trigger_ai_call(control_char):
-    """Placeholder function to trigger AI interaction based on control characters."""
-    # Add custom logic to call the AI decision-making module here
-    print(f"AI triggered by control character: {control_char}")
-
-# useful for determining what to do with text box information
+# Useful for determining what to do with text box information
 # print a list of all in game characters and their correponding Hex & Decmal values
 def print_encoding_values():
     chart = create_encoding_chart()
@@ -119,6 +110,5 @@ def print_encoding_values():
             if value and value != "Control characters":
                 hex_value = f"{row_index:X}{col_index:X}"
                 dec_value = int(hex_value, 16)
-                if dec_value != 0:  # Ignore 0x00
+                if dec_value != 0:  
                     print(f"Character: '{value}' | Hex: 0x{hex_value} | Decimal: {dec_value}")
-#print_encoding_values()
