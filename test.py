@@ -218,17 +218,6 @@ async def check_determinator(env, shared_state):
             #print("Finished adding ")
             # Allow some time for the game to process the action
             await asyncio.sleep(3)  # Adjust this delay based on how long you need
-        #else: 
-
-        #we still need to process actions when move determinator == 126
-        """ elif info.get("determinator") != 121 and action_taken:
-            # need second determinator, go find the top left corner of the box and  see if its a NE right corner or ES
-            action_taken = False  # Reset action_taken when determinator changes
-            print("reset action taken")
-            #move_taken ?
-        elif info.get("move_determintator") != 126 and move_taken:
-            move_taken = False
-            print("reset move taken")"""
 
         await asyncio.sleep(0.1)  # Control how often to check
     print("end determinator")

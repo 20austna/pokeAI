@@ -35,9 +35,9 @@ def get_action_queue(action_description, menu_state):
                                          2. A cursor(▶) will be next to a option in the menu, consider where the cursor is to determine where in the list you are. 
                                          3. You will be provided a menu state and a desired action, you must first determine what type of menu you are in as that will determine how to navigate. 
                                          For example if the menu is a move menu, each move is on its own line arranged top to bottom(left to right and past a carriage return in a string)
-                                         but if you are in the main menu things are arranged in a square so the first two are on the first line and the next two on the next line. 
+                                         but if you are in the main menu things are arranged in a square so the first two(FIGHT and PKMN) are on the first line and the next two(PACK and RUN) on the next line. 
                                          So, pressing down while on the first item would skip you to the third item, 
-                                         while pressing right on the first would send you to the second.
+                                         Likewise pressing right on the third item would send you to the four and up on the fourth to the second. 
                                          4. Use the function `add_to_q(nums)` to add numbers to the action queue. You must invoke this via a `function_call`
                                          5. When doing inputs that will navigate you to another menu (only applies to pressing A or B) you cannot assume the position of the cursor since that depends on information that you do not have. Therefore, when in the main menu and pressing A to enter the move menu, do not continue. 
                                          6. In order to "use" or "select" a move you must navigate to the move and press 'A' when appropriate 
@@ -142,7 +142,7 @@ def process_action(function_call):
 # Example usage
 """if __name__ == "__main__":
     # Simulate the decision to attack
-    action_description = "use the move scratch"  # Placeholder action
+    action_description = "Larvitar cannot use any move as all moves have 0 current PP."  # Placeholder action
     #menu_state = "║   ║SCRATCH      ║\n║   ║▶LEER         ║\n║   ║RAGE         ║\n║   ║-            ║"  # Current menu state
 
     menu_state = "║       ║          ║\n ║       ║▶FIGHT PKMN ║\n║       ║          ║\n║       ║ PACK  RUN║"

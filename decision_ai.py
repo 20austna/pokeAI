@@ -12,22 +12,22 @@ openai.api_key = os.getenv("PokemonAPI")
 # Example Pokémon objects
 move_4 = {
     "id": 12,
-    "current_move_pp": 2,
+    "current_move_pp": 0,
 }
 
 move_5 = {
     "id": 91,
-    "current_move_pp": 10,  # Maximum PP for Pound
+    "current_move_pp": 0,  # Maximum PP for Pound
 }
 
 move_6 = {
-    "id": 3,
-    "current_move_pp": 25,  # Maximum PP for double slap
+    "id": 89,
+    "current_move_pp": 0,  # Maximum PP for double slap
 }
 
 move_7 = {
-    "id": 43,
-    "current_move_pp": 10,  # Maximum PP for double slap
+    "id": 155,
+    "current_move_pp": 0,  # Maximum PP for double slap
 }
 
 #1: 'Pound', 2: 'Karate Chop'
@@ -100,6 +100,7 @@ def calculate_damage(attacker, defender, move):
             damage_multiplier.append(0.5)
         elif defender_type in type_chart[move_type]["immune_to"]:
             damage_multiplier.append(0)
+
             
 
     # Check for Same Type Attack Bonus (STAB)
@@ -115,7 +116,7 @@ def calculate_damage(attacker, defender, move):
         result *= num
 
     #print(damage_multiplier)
-    #print(result)
+    #print(f"printing result: {result} for move {move}")
     return move['power'] * result
 
 
@@ -126,7 +127,7 @@ def generate_prompt(attacker, defender):
 
     prompt = f"""
     You are a Pokémon battle assistant. Given the information below, choose the best move for {attacker['name']} to use against {defender['name']}.
-    Consider the type effectiveness, move power, current PP, total move power, and accuracy to determine the best move.
+    consider current PP, total move power, and accuracy to determine the best move. Do not consider type effectiveness as it has been calculated for you in total move power.
 
     Attacker: {attacker['name']}
     Type(s): {attacker['types']}
@@ -134,7 +135,7 @@ def generate_prompt(attacker, defender):
     """
 
     move_damages = {}
-    print(pokemon_moves)
+    #print(pokemon_moves)
     # Add the attacker's moves to the prompt
     for move_key, move_data in pokemon_moves.items():   
         # Check type effectiveness for each move against the defender
@@ -146,9 +147,9 @@ def generate_prompt(attacker, defender):
         #print(damage)
         
         move_damages[move_data['name']] = damage
-
+        #print(f"move_damages: {move_damages} for move {move_data}, damage:{damage}")
         #if damage != 0: 
-        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Power: {move_data['power']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {damage}), Description: {move_data['description']}"
+        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {damage}), Description: {move_data['description']}"
         #elif damage == 0:
             #continue
     
@@ -156,7 +157,7 @@ def generate_prompt(attacker, defender):
     prompt += f"\nDefender: {defender['name']}\nType: {', '.join(defender['types'])}\n\n"
 
     prompt += """
-    Based on the provided information, determine which move will be the most effective considering type advantages, move power, move's description, accuracy, and current PP left.
+    Based on the provided information, determine which move will be the most effective considering damage(which is provided to you and takes into consideration type effectiveness), move power, move's description, accuracy, and current PP left.
     Return the name of the most optimal move and your reasoning for choosing it over others, defend your choice."""
 
     return prompt
@@ -184,7 +185,7 @@ def make_decision(attacker, defender):
     response = client.chat.completions.create(
         model="gpt-4",  # You can use a different engine like "gpt-4" or "gpt-3.5-turbo"
         messages=messages,
-        max_tokens=50,
+        #max_tokens=50,
         temperature=0.5,
     )
 
@@ -196,4 +197,4 @@ def make_decision(attacker, defender):
 #best_move_decision = make_decision(Pokemon_1, Pokemon_2)
 
 # Print the result
-print(f"Select {make_decision(Pokemon_1, Pokemon_2)}")
+#print(f"Select {make_decision(Pokemon_1, Pokemon_2)}")
