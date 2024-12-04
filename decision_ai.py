@@ -7,56 +7,17 @@ from openai import OpenAI
 load_dotenv()
 
 # Set OpenAI API key and change to your API key name
-openai.api_key = os.getenv("PokemonAPI")
+#openai.api_key = os.getenv("PokemonAPI")
 
-# Example Pokémon objects
-move_4 = {
-    "id": 53,
-    "current_move_pp": 2,
-}
-
-move_5 = {
-    "id": 91,
-    "current_move_pp": 10,  # Maximum PP for Pound
-}
-
-move_6 = {
-    "id": 3,
-    "current_move_pp": 25,  # Maximum PP for double slap
-}
-
-move_7 = {
-    "id": 157,
-    "current_move_pp": 10,  # Maximum PP for double slap
-}
-
-#1: 'Pound', 2: 'Karate Chop'
-Pokemon_1 = Pokemon(
-    id=246,
-    #types=["Rock", "Ground"],
-    moves = [move_4, move_5, move_6, move_7],
-    hp=50,
-    attack=64,
-    defense=50,
-    special_attack=45,
-    special_defense=50,
-    speed=41,
-    description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
-)
-
-Pokemon_2 = Pokemon(
-    id=6,
-    #types=["Fire"],
-    moves = [move_4],
-    hp=50,
-    attack=64,
-    defense=50,
-    special_attack=45,
-    special_defense=50,
-    speed=41,
-    description="Born deep underground, it comes aboveground and becomes a pupa once it has finished eating the surrounding soil."
-)
-
+"""
+ The type chart defines the relationships between Pokémon types for damage calculation.
+ It specifies which types are strong against, weak against, or immune to others.
+ The structure is a dictionary where the keys are the move types, and the values
+ are dictionaries detailing the interactions with other types:
+   - "strong_against": A list of types that take 2x damage from this move type.
+   - "weak_against": A list of types that take 0.5x damage from this move type.
+   - "immune_to": A list of types that take 0 damage from this move type.
+"""
 type_chart = {
     "normal": {"strong_against": [], "weak_against": ["rock", "steel"], "immune_to": ["ghost"]},
     "fire": {"strong_against": ["grass", "bug", "ice", "steel"], "weak_against": ["water", "rock", "fire", "dragon"], "immune_to": []},
@@ -77,27 +38,29 @@ type_chart = {
     "steel": {"strong_against": ["ice", "rock"], "weak_against": ["fire", "water", "electric", "steel"], "immune_to": ["poison"]},
 }
 
-# Function to calculate move damage based on Gen 2 type chart, move power, and STAB.
+# Function to calculate the damage dealt by a move in a Pokémon battle.
+# Uses Generation 2 type chart mechanics, move power, and STAB (Same Type Attack Bonus).
 def calculate_damage(attacker, defender, move):
-    #print("attacker: ", attacker)
-    #print("defender: ", defender)
-    #print("move: ", move)
-    
-    if move["current_move_pp"] <= 0:  # Check if move is out of PP
+    # Check if move is out of PP   
+    if move["current_move_pp"] <= 0:
         return 0
 
     move_type = move["move_type"]
-    #print(move_type)
 
+    # Initialize a list to store multipliers affecting damage calculation.
+    # Default value is 1 (no effect on damage).
     damage_multiplier = [1]
-    # Determine type effectiveness multiplier
+    
+    # Determine type effectiveness multiplier by checking defender's types.
     for defender_type in defender:
         defender_type = defender_type.lower()
-        #print("defender_types:", defender_type)
+        # If the move's type is strong against the defender's type, double the damage.
         if defender_type in type_chart[move_type]["strong_against"]:
             damage_multiplier.append(2)
+        # If the move's type is weak against the defender's type, halve the damage.
         elif defender_type in type_chart[move_type]["weak_against"]:
             damage_multiplier.append(0.5)
+         # If the move's type has no effect on the defender's type, set damage to 0.
         elif defender_type in type_chart[move_type]["immune_to"]:
             damage_multiplier.append(0)
             
@@ -105,25 +68,26 @@ def calculate_damage(attacker, defender, move):
     # Check for Same Type Attack Bonus (STAB)
     for attack_type in attacker:
         attack_type = attack_type.lower()
-        #print("attack_type: ", attack_type)
+        # If the attacker has the same type as the move, apply the STAB multiplier.
         if attack_type in move_type:
             damage_multiplier.append(1.5)
             break
     
+    # Calculate the final damage multiplier by multiplying all factors.
     result = 1
     for num in damage_multiplier:
         result *= num
 
-    #print(damage_multiplier)
-    #print(result)
+    # Return the final damage, which is the move's power multiplied by the overall multiplier.
     return move['power'] * result
 
 
-# Function to generate the prompt for OpenAI
+# Function to generate a prompt for an OpenAI model to determine the best move in a Pokémon battle.
 def generate_prompt(attacker, defender):
     # Get the moves for the attacker
     pokemon_moves = attacker._data.get("moves", {})
 
+    # Initialize the prompt with instructions and details about the attacker.
     prompt = f"""
     You are a Pokémon battle assistant. Given the information below, choose the best move for {attacker['name']} to use against {defender['name']}.
     Consider the type effectiveness, move power, current PP, total move power, and accuracy to determine the best move.
@@ -134,34 +98,26 @@ def generate_prompt(attacker, defender):
     """
 
     move_damages = {}
-    # Add the attacker's moves to the prompt
-    for move_key, move_data in pokemon_moves.items():   
-        # Check type effectiveness for each move against the defender
-        
-        damage = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data)
-        #print(damage)
-        
-        move_damages[move_data['name']] = damage
 
-        #if damage != 0: 
-        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Power: {move_data['power']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {damage})\n"
-        #elif damage == 0:
-            #continue
+    # Iterate through the attacker's moves and calculate their potential effectiveness.
+    for move_key, move_data in pokemon_moves.items():   
+        # Calculate the total power of the move based on type effectiveness and other factors.
+        total_power = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data) 
+        move_damages[move_data['name']] = total_power
+        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Power: {move_data['power']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {total_power})\n"
     
-    # Add defender's name and typing to the prompt
     prompt += f"\nDefender: {defender['name']}\nType: {', '.join(defender['types'])}\n\n"
 
     prompt += """
     Based on the provided information, determine which move will be the most effective considering type advantages, move power, accuracy, and current PP left.
     Return only the name of the most optimal move."""
 
+    # Return fully constructed prompt
     return prompt
 
-#print(generate_prompt(Pokemon_1, Pokemon_2))
-
-# Function to make a decision using OpenAI
+# Function to make a decision using OpenAI's API to select the optimal move in a Pokémon battle.
 def make_decision(attacker, defender):
-    # Create the messages structure for the API
+    # Create a structured message for the OpenAI API, including instructions and context.
     messages = [
         {
             "role": "system", 
@@ -173,23 +129,17 @@ def make_decision(attacker, defender):
         },
     ]
 
-    # OpenAI API client setup (unchanged)
+    # Initialize the OpenAI client using the API key stored in an environment variable.
     client = OpenAI(api_key=os.environ["PokemonAPI"])
 
-    # Make the API call to OpenAI
+    # Make an API call to OpenAI's chat model to generate a response based on the messages.
     response = client.chat.completions.create(
-        model="gpt-4",  # You can use a different engine like "gpt-4" or "gpt-3.5-turbo"
+        model="gpt-4",
         messages=messages,
         max_tokens=50,
         temperature=0.5,
     )
 
-    # Parse the AI's decision
+    # Extract the AI's decision from the response.
     decision = response.choices[0].message.content
     return decision
-
-# Call the function to make a decision
-#best_move_decision = make_decision(Pokemon_1, Pokemon_2)
-
-# Print the result
-#print(f"Select {make_decision(Pokemon_1, Pokemon_2)}")
