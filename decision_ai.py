@@ -91,11 +91,14 @@ def generate_prompt(attacker, defender):
     """
 
     move_damages = {}
-
     # Iterate through the attacker's moves and calculate their potential effectiveness.
     for move_key, move_data in pokemon_moves.items():   
-        # Calculate the total power of the move based on type effectiveness and other factors.
-        total_power = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data) 
+
+        if move_data.__getitem__("attack_type") == "status" or move_data.__getitem__("power") == None:
+            total_power = 0
+        else:
+            # Calculate the total power of the move based on type effectiveness and other factors.
+            total_power = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data)
         move_damages[move_data['name']] = total_power
         prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {total_power}), Description: {move_data['description']}"
     
