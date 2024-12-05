@@ -61,7 +61,7 @@ To get a local copy up and running, follow these steps.
    ```
 8. Run the project(ensure you have a legally obtained PokemonSilver ROM, see below):
    ```bash
-   /path/to/venv/bin/python test.py  # Replace with entry point
+   /path/to/venv/bin/python test.py
    ```
 
 **Note**: The ROM file itself is not included and must be legally obtained and added to the `/path/to/venv/lib/python3.XX/site-packages/retro/data/stable/PokemonSilver-GbColor` folder separately.
@@ -74,6 +74,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 Nathaniel Austen - 20austna@gmail.com
-TODO: Other contributor's names and emails
+Ariah Peregrina - peregran@miamioh.edu
+Malak Lamsettef - lamsetm@miamioh.edu
+Mihir Tamrakr - tamrakm@miamioh.edu
 
 Project Link: https://github.com/20austna/pokeAI
