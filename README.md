@@ -5,9 +5,6 @@
 ## Table of Contents
 - [About the Project](#about-the-project)
 - [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Features](#features)
-- [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
@@ -22,7 +19,7 @@ PokeAI utilizes openAIs chatAI and a fork of gym-retro(Stable-Retro) to have cha
 
 ## Getting Started
 
-To get a local copy up and running, follow these simple steps.
+To get a local copy up and running, follow these steps.
 
 ### Prerequisites
 - [Stable Retro](https://github.com/Farama-Foundation/stable-retro)
@@ -68,15 +65,6 @@ To get a local copy up and running, follow these simple steps.
    ```
 
 **Note**: The ROM file itself is not included and must be legally obtained and added to the `/path/to/venv/lib/python3.XX/site-packages/retro/data/stable/PokemonSilver-GbColor` folder separately.
-
-## Usage
-
-Provide examples and instructions on how to use your project effectively. Include screenshots or code snippets as necessary.
-
-## Features
-- Feature 1: Brief description
-- Feature 2: Brief description
-- Feature 3: Brief description
 
 
 ## License
