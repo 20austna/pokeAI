@@ -61,7 +61,7 @@ To get a local copy up and running, follow these steps.
    ```
 8. Run the project(ensure you have a legally obtained PokemonSilver ROM, see below):
    ```bash
-   /path/to/venv/bin/python test.py
+   /path/to/venv/bin/python silver.py
    ```
 
 **Note**: The ROM file itself is not included and must be legally obtained and added to the `/path/to/venv/lib/python3.XX/site-packages/retro/data/stable/PokemonSilver-GbColor` folder separately.
