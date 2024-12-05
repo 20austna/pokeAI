@@ -74,8 +74,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 Nathaniel Austen - 20austna@gmail.com
+
 Ariah Peregrina - peregran@miamioh.edu
+
 Malak Lamsettef - lamsetm@miamioh.edu
+
 Mihir Tamrakr - tamrakm@miamioh.edu
 
 Project Link: https://github.com/20austna/pokeAI
