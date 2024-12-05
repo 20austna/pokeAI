@@ -18,7 +18,6 @@ def add_to_q(nums):
     global action_queue
     for num in nums:
         action_queue.append(num)
-        #print(f"Added {num} to action queue.")
 
 def get_action_queue(action_description, menu_state):
     # Define the messages for the Action AI
@@ -42,10 +41,10 @@ def get_action_queue(action_description, menu_state):
                                          5. When doing inputs that will navigate you to another menu (only applies to pressing A or B) you cannot assume the position of the cursor since that depends on information that you do not have. Therefore, when in the main menu and pressing A to enter the move menu, do not continue. 
                                          6. In order to "use" or "select" a move you must navigate to the move and press 'A' when appropriate 
                                          """},
-        {"role": "user", "content": f"You must provide your reasoning before calling any functions. Given the menu state: '{menu_state}', and the desired action: '{action_description}', please provide the necessary controller inputs not just in your content response but also within your function_call reseponse, use `add_to_q(nums)`."},
+        {"role": "user", "content": f"You must provide your reasoning before calling any functions. Given the menu state: '{menu_state}', and the desired action: '{action_description}', please provide the necessary controller inputs not just in your content response but also within your function_call response, use `add_to_q(nums)`."},
     ]
 
-    #try strict = true
+    # try strict = true
     for attempt in range(3):
         # Call OpenAI API
         response = openai.chat.completions.create(
@@ -75,7 +74,6 @@ def get_action_queue(action_description, menu_state):
         )
         
         # Extract response components
-        # response.choices[0].message.function_call
         choice = response.choices[0].message
         reasoning = choice.content
         function_call = choice.function_call
@@ -101,13 +99,4 @@ def process_action(function_call):
         if nums:
             add_to_q(nums)
 
-# Example usage
-"""if __name__ == "__main__":
-    # Simulate the decision to attack
-    action_description = "Larvitar cannot use any move as all moves have 0 current PP."  # Placeholder action
-    #menu_state = "║   ║SCRATCH      ║\n║   ║▶LEER         ║\n║   ║RAGE         ║\n║   ║-            ║"  # Current menu state
 
-    menu_state = "║       ║          ║\n ║       ║▶FIGHT PKMN ║\n║       ║          ║\n║       ║ PACK  RUN║"
-
-    
-    print("Current action queue:", get_action_queue(action_description, menu_state))"""
