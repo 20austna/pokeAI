@@ -97,13 +97,13 @@ def generate_prompt(attacker, defender):
         # Calculate the total power of the move based on type effectiveness and other factors.
         total_power = calculate_damage(attacker._data.get("types"), defender._data.get("types"), move_data) 
         move_damages[move_data['name']] = total_power
-        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Power: {move_data['power']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {total_power})\n"
+        prompt += f"  - {move_data['name']} (Type: {move_data['move_type']}, Accuracy: {move_data['accuracy']}, Current PP: {move_data['current_move_pp']}, Total Power: {total_power}), Description: {move_data['description']}"
     
     prompt += f"\nDefender: {defender['name']}\nType: {', '.join(defender['types'])}\n\n"
 
     prompt += """
     Based on the provided information, determine which move will be the most effective considering damage(which is provided to you and takes into consideration type effectiveness), move power, move's description, accuracy, and current PP left.
-    Return the name of the most optimal."""
+    Return the name of the most optimal move"""
 
     # Return fully constructed prompt
     return prompt

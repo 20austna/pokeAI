@@ -45,37 +45,6 @@ def get_action_queue(action_description, menu_state):
         {"role": "user", "content": f"You must provide your reasoning before calling any functions. Given the menu state: '{menu_state}', and the desired action: '{action_description}', please provide the necessary controller inputs not just in your content response but also within your function_call reseponse, use `add_to_q(nums)`."},
     ]
 
-    # Call OpenAI API to get the action queue
-    """response = openai.chat.completions.create(
-        model="gpt-4o",
-        messages=messages,
-        #function_call={"name": "add_to_q"},  #always calls the function but for some reason causes it to not return any reasoning
-                                             #leading to unreliable outcomes
-        #leaving this both commented leads to situations where it doesnt always call the function, add_to_q
-
-        functions=[
-            {
-                "name": "add_to_q",
-                "description": "Add an array of numbers to the action queue.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "nums": {
-                            "type": "array",
-                            "items": {
-                                "type": "integer",
-                            },
-                            "description": "An array of numbers to add to the action queue."
-                        }
-                    },
-                    "required": ["nums"]
-                }
-            }
-        ],
-        function_call="auto",  # Indicate that the AI can call this function
-        temperature=0,  # Use a lower temperature for deterministic output
-    )"""
-
     #try strict = true
     for attempt in range(3):
         # Call OpenAI API
