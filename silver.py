@@ -140,7 +140,10 @@ def create_pokemon(info):
         hp=info.get("Mon_1_HP_2")
     )
     
-    return our_current_mon, their_current_mon
+    our_party = [our_current_mon]
+    their_party = [their_current_mon]
+
+    return our_party, their_party
 
 def print_action_taken(action):
     """
@@ -193,8 +196,8 @@ async def check_determinator(env, shared_state):
         if info and info.get("determinator") == 121 and not action_taken and not move_taken:
             menu_str = process_move_menu_variables(info) # Get the text on screen
             print(f"Menu state:\n{menu_str}")
-            pokemon=create_pokemon(info)
-            decision_string = make_decision(pokemon[0], pokemon[1])
+            our_party, their_party = create_pokemon(info)
+            decision_string = make_decision(our_party[0], their_party[0])
             print(f"Decision AI Reasoning: {decision_string}")
             action = [0] * 9 # Create an action array with none of the controller inputs set to true
             shared_state["action_taken"] = True
@@ -214,8 +217,8 @@ async def check_determinator(env, shared_state):
             print(f"Menu state\n{menu_str}")
             if not decision_string: # Make sure we aren't asking the decision AI to pick a move if we're already picked one
                 print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
-                pokemon=create_pokemon(info)
-                decision_string = make_decision(pokemon[0], pokemon[1])
+                our_party, their_party = create_pokemon(info)
+                decision_string = make_decision(our_party[0], their_party[0])
                 print(f"Decision: {decision_string}")
             action = [0] * 9
             shared_state["move_taken"] = True

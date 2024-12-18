@@ -1,7 +1,7 @@
 from pokemon import Pokemon
 
 class PokemonParty:
-    def __init__(self, max_party_size=6):
+    def __init__(self, max_party_size=6, party=None):
         """
         Initialize a PokemonParty object.
 
@@ -9,7 +9,7 @@ class PokemonParty:
             in the part (default)
         """
         self.max_part_size = max_party_size
-        self.party = []
+        self.party = party
 
     def add_pokemon(self, pokemon):
         """
