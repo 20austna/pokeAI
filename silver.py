@@ -142,6 +142,37 @@ def create_pokemon(info):
     
     return our_current_mon, their_current_mon
 
+def print_action_taken(action):
+    """
+    Prints which button on the controller is being pressed based on the action array.
+    
+    Args:
+    action (list): A list of integers where 1 indicates a button press and 0 indicates no press.
+                   Only one element in the list will be 1 at a time.
+    """
+    # Reverse the key_to_action dictionary to map indices to keys
+    action_to_key = {v: k for k, v in key_to_action.items()}
+    button_labels = {
+        'z': 'B',
+        'tab': 'SELECT',
+        'enter': 'START',
+        'up': 'UP',
+        'down': 'DOWN',
+        'left': 'LEFT',
+        'right': 'RIGHT',
+        'x': 'A'
+    }
+    
+    try:
+        # Find the index of the pressed button
+        pressed_index = action.index(1)
+        key = action_to_key.get(pressed_index, None)
+        if key:
+            print(f"Button pressed: {button_labels[key]}")
+        else:
+            print("Unknown button pressed.")
+    except ValueError:
+        print("No button is pressed.")
 
 async def check_determinator(env, shared_state):
     """Task to check info['determinator'] and make AI decisions."""
@@ -161,10 +192,10 @@ async def check_determinator(env, shared_state):
         # If we see that a specific character in a specific place on screen we know we're in the main menu
         if info and info.get("determinator") == 121 and not action_taken and not move_taken:
             menu_str = process_move_menu_variables(info) # Get the text on screen
-            print(f"Making decision based on menu determinator. \n Menu state:\n{menu_str}")
+            print(f"Menu state:\n{menu_str}")
             pokemon=create_pokemon(info)
             decision_string = make_decision(pokemon[0], pokemon[1])
-            print(decision_string)
+            print(f"Decision AI Reasoning: {decision_string}")
             action = [0] * 9 # Create an action array with none of the controller inputs set to true
             shared_state["action_taken"] = True
             action_arr = get_action_queue(decision_string, menu_str) # Function returns an array
@@ -180,11 +211,12 @@ async def check_determinator(env, shared_state):
         elif info and info.get("move_determinator") == 126 and info.get("determinator") != 121 and not move_taken:
             # This code is all essentially the same as the block above except for the "if"
             menu_str = process_move_menu_variables(info)
-            print(f"Making taking action based on move determinator. \n Menu state\n{menu_str}")
+            print(f"Menu state\n{menu_str}")
             if not decision_string: # Make sure we aren't asking the decision AI to pick a move if we're already picked one
                 print(f"Making decision based on move determinator. \n Menu state\n{menu_str}")
                 pokemon=create_pokemon(info)
                 decision_string = make_decision(pokemon[0], pokemon[1])
+                print(f"Decision: {decision_string}")
             action = [0] * 9
             shared_state["move_taken"] = True
             action_arr = get_action_queue(decision_string, menu_str)
@@ -197,7 +229,6 @@ async def check_determinator(env, shared_state):
             await asyncio.sleep(3) 
 
         await asyncio.sleep(0.1)  # Control how often to check
-    print("end determinator")
 
 async def process_actions(env, shared_state):
     """Task to process actions from the queue."""
@@ -208,7 +239,7 @@ async def process_actions(env, shared_state):
             action = action_queue.popleft()  # Get the next action from the queue
             _, _, done, _, shared_state["info"] = env.step(action)
 
-            print(f'action taken{action}')
+            print_action_taken(action)
             await asyncio.sleep(1)  # Control the rate of processing actions
         
             if done:
@@ -216,10 +247,8 @@ async def process_actions(env, shared_state):
                 break
         if action_taken:
             shared_state["action_taken"] = False
-            print("resetting action taken")
         if move_taken:
             shared_state["move_taken"] = False
-            print("resetting move taken")
 
         await asyncio.sleep(1)  # Control the rate of processing actions    
         

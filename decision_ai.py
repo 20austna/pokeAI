@@ -32,6 +32,7 @@ type_chart = {
 
 # Function to calculate the damage dealt by a move in a Pokémon battle.
 # Uses Generation 2 type chart mechanics, move power, and STAB (Same Type Attack Bonus).
+# https://bulbapedia.bulbagarden.net/wiki/Damage
 def calculate_damage(attacker, defender, move):
     # Check if move is out of PP   
     if move["current_move_pp"] <= 0:
@@ -106,7 +107,7 @@ def generate_prompt(attacker, defender):
 
     prompt += """
     Based on the provided information, determine which move will be the most effective considering damage(which is provided to you and takes into consideration type effectiveness), move power, move's description, accuracy, and current PP left.
-    Return the name of the most optimal move"""
+    Return the name of the most optimal move and why you chose it."""
 
     # Return fully constructed prompt
     return prompt
@@ -132,7 +133,6 @@ def make_decision(attacker, defender):
     response = client.chat.completions.create(
         model="gpt-4",
         messages=messages,
-        max_tokens=50,
         temperature=0.5,
     )
 

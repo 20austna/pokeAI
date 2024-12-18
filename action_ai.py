@@ -84,6 +84,7 @@ def get_action_queue(action_description, menu_state):
             process_action(function_call)
             ret_q = action_queue
             action_queue = []
+            print(f"Action AI Reasoning: \n{reasoning}")
             return ret_q
 
         # Debugging info on retries
